@@ -2,6 +2,20 @@
 
 Use this map only when the project has no stronger convention. Prune it to the smallest structure that can preserve the next decision.
 
+## Documentation Root
+
+Choose a docs root before creating files. All paths below are relative to that root.
+
+Common roots:
+
+- `.openplan/` inside a code repo when OpenPlan-governed docs should stay separate from product docs.
+- `docs/` when the project already uses docs as the documentation surface.
+- repository root for a dedicated docs repo.
+- any explicit relative/absolute path supplied by the user.
+- a separate docs repository when the project uses dual repos.
+
+Do not migrate existing docs into a new root unless the human explicitly asks.
+
 ## Docs Repo Surface
 
 - `README.md`: entry point, navigation, and current status pointer.

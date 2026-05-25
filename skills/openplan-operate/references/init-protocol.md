@@ -37,6 +37,8 @@ Classify available artifacts:
 
 When two repos or surfaces exist, preserve their separation and compare drift explicitly.
 
+Also identify the docs root when it matters. It may be `.openplan/`, `docs/`, repo root, a separate docs repo, or another user-provided path. Treat document-map paths as relative to that root.
+
 ## Step 4: Select Mode
 
 Choose exactly one primary mode:

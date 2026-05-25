@@ -18,7 +18,11 @@ Use this after `$openplan-core` when the agent is about to do work, delegate wor
 4. Detect whether the project has two surfaces:
    - goal/intent/design/docs surface;
    - implementation/code/execution surface.
-5. Classify the mode:
+5. Identify configurable roots when present:
+   - docs root such as `.openplan/`, `docs/`, repo root, separate docs repo, or user-provided path;
+   - code root when separate from docs;
+   - temporary output root for disposable briefs.
+6. Classify the mode:
    - align;
    - research;
    - design;
@@ -26,7 +30,7 @@ Use this after `$openplan-core` when the agent is about to do work, delegate wor
    - review;
    - operate/dispatch;
    - stop and report blocked.
-6. State any assumption that affects the route.
+7. State any assumption that affects the route, including assumed docs root.
 
 ## Behavior Constraints
 
@@ -36,6 +40,7 @@ Use this after `$openplan-core` when the agent is about to do work, delegate wor
 - Do not switch branches, delete untracked state, clean working directories, or perform destructive recovery unless explicitly asked.
 - Prefer existing project infrastructure and language features.
 - Avoid hardcoded roles, paths, permissions, or backend names when the project is config-driven.
+- Avoid hardcoded documentation roots. Use the user-provided docs root or existing project convention before proposing `.openplan/`, `docs/`, or repo root.
 - Keep comments and explanations minimal unless they clarify non-obvious logic.
 - If a required artifact is missing, report the missing artifact and why it matters.
 

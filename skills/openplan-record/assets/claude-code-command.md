@@ -18,8 +18,9 @@ Rules:
    - handoff for session continuity;
    - review for findings;
    - HTML brief for temporary human visualization.
-5. Preserve source evidence and scope.
-6. Deduplicate before adding.
-7. Before changing durable goal/intent from ambiguous input, ask only if you are the human-facing coordinator; otherwise report `Human decisions required`.
+5. Resolve the destination root, especially docs root (`.openplan/`, `docs/`, repo root, separate repo, or user-provided path).
+6. Preserve source evidence and scope.
+7. Deduplicate before adding.
+8. Before changing durable goal/intent from ambiguous input, ask only if you are the human-facing coordinator; otherwise report `Human decisions required`.
 
 Output an update proposal before making durable changes unless the user explicitly requested the exact update.

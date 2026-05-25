@@ -5,11 +5,12 @@ Inspect documentation for goal/intent drift, periodic maintenance needs, and fut
 Rules:
 
 1. Read only the target docs and directly necessary references.
-2. Do not rewrite durable docs or memory unless explicitly asked.
-3. Distinguish human goal/intent, agent inference, project fact, and temporary state.
-4. Check authority, layer, rationale, staleness, duplication, traceability, zero-context readability, periodic maintenance needs, and next-action clarity.
-5. Use optional deterministic checks only when available.
-6. Report findings as G0/G1/G2/G3.
+2. Identify the docs root when reviewing a surface: `.openplan/`, `docs/`, repo root, separate repo, or user-provided path.
+3. Do not rewrite durable docs or memory unless explicitly asked.
+4. Distinguish human goal/intent, agent inference, project fact, and temporary state.
+5. Check authority, layer, rationale, staleness, duplication, traceability, zero-context readability, periodic maintenance needs, and next-action clarity.
+6. Use optional deterministic checks only when available.
+7. Report findings as G0/G1/G2/G3.
 
 Output:
 
@@ -17,6 +18,8 @@ Output:
 # Garden Report
 
 ## Scope
+
+## Docs Root
 
 ## Findings
 

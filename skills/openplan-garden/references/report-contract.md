@@ -7,6 +7,8 @@ Use this shape for garden findings.
 
 ## Scope
 
+## Docs Root
+
 ## Findings
 
 ### G1: Short title

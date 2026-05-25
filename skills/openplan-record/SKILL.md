@@ -35,14 +35,18 @@ Memory and docs represent the human goal/intent. Do not record agent guesses as 
    - current continuation state -> handoff;
    - quality issue -> review;
    - human-facing visualization -> HTML brief.
-3. Preserve provenance:
+3. Resolve destination root:
+   - memory location from platform or user instruction;
+   - docs root such as `.openplan/`, `docs/`, repo root, separate docs repo, or user-provided path;
+   - temporary output path for disposable briefs.
+4. Preserve provenance:
    - source statement or artifact;
    - date/session when useful;
    - confidence;
    - scope.
-4. Deduplicate before adding.
-5. Mark stale or superseded entries instead of silently overwriting when history matters.
-6. Before changing durable goal/intent from ambiguous input, ask only if this agent is the human-facing coordinator; otherwise report `Human decisions required`.
+5. Deduplicate before adding.
+6. Mark stale or superseded entries instead of silently overwriting when history matters.
+7. Before changing durable goal/intent from ambiguous input, ask only if this agent is the human-facing coordinator; otherwise report `Human decisions required`.
 
 ## Memory Rules
 
@@ -61,6 +65,7 @@ Memory and docs represent the human goal/intent. Do not record agent guesses as 
 - Do not rewrite docs just to mirror conversation unless the human goal/intent is clear.
 - Prefer references over duplicated content.
 - Keep docs readable by a zero-context future agent or human.
+- Treat docs paths as relative to the selected docs root. Do not assume project root.
 
 ## Output
 
@@ -69,6 +74,7 @@ When asked to update records, produce:
 ```markdown
 Record classification:
 Proposed destination:
+Destination root:
 Source evidence:
 Exact update:
 Requires human confirmation: yes/no

@@ -30,27 +30,50 @@ Do not use it for ordinary documentation edits after the document structure alre
    - code repo;
    - single-repo project;
    - temporary teaching/reporting surface.
-2. Identify authority sources:
+2. Identify the documentation root:
+   - explicit user-provided path;
+   - existing project convention;
+   - `.openplan/` when docs should live inside a code repo without mixing with product docs;
+   - `docs/` or repo root when that is the project convention;
+   - a separate docs repo or absolute path when provided.
+3. Identify authority sources:
    - explicit human goal/intent;
    - existing docs/design/ADR files;
    - code evidence;
    - prior handoff or needs snapshot;
    - agent inference.
-3. Decide the minimum document map needed for the next phase.
-4. Before creating durable docs, state:
+4. Decide the minimum document map needed for the next phase.
+5. Before creating durable docs, state:
+   - docs root;
    - what will be generated;
    - which source backs each file;
    - what is inferred or pending confirmation;
    - whether the file is source of truth, draft, handoff, review, or disposable.
-5. Generate only the smallest useful scaffold unless the user explicitly asks for a broader docs package.
-6. Record an explicit human decision, or propose/request a decision record, when initialization creates or changes durable design/governance.
-7. Seed a needs snapshot when the human goal/intent or project direction must survive across agents or sessions.
-8. Run `$openplan-garden` after broad generation and `$openplan-record` for durable memory/docs updates.
-9. Use `$openplan-research` first when the docs scaffold depends on facts not already backed by local durable context.
+6. Generate only the smallest useful scaffold unless the user explicitly asks for a broader docs package.
+7. Record an explicit human decision, or propose/request a decision record, when initialization creates or changes durable design/governance.
+8. Seed a needs snapshot when the human goal/intent or project direction must survive across agents or sessions.
+9. Run `$openplan-garden` after broad generation and `$openplan-record` for durable memory/docs updates.
+10. Use `$openplan-research` first when the docs scaffold depends on facts not already backed by local durable context.
+
+## Documentation Root
+
+The docs root is configurable. Do not assume OpenPlan docs must live at the project root.
+
+Valid docs roots include:
+
+- `.openplan/` inside a code repo;
+- `docs/` inside a project;
+- the repository root for a dedicated docs repo;
+- an absolute or relative path provided by the user;
+- a separate docs repository.
+
+All paths in the document map are relative to the selected docs root. For example, if the docs root is `.openplan/`, then `design/` means `.openplan/design/`.
+
+Use the user's explicit docs root when provided. If no docs root is provided, discover existing conventions before proposing one. Do not move or rewrite existing docs into a new root unless the human explicitly requests migration.
 
 ## Minimal Document Map
 
-Use project conventions first. If no convention exists, start from this map and prune aggressively:
+Use project conventions first. If no convention exists, start from this map and prune aggressively. Paths are relative to the selected docs root.
 
 | Path | Purpose | Durable |
 |---|---|---|
@@ -84,6 +107,7 @@ Stop and ask/report when:
 
 - the human goal/intent is unclear;
 - the target surface is ambiguous;
+- the docs root is ambiguous and creating files would create competing sources of truth;
 - generation would overwrite existing docs;
 - the initial document map changes governance or architecture;
 - a durable decision is needed but no human decision exists;
@@ -96,6 +120,7 @@ Only the active human-facing coordinator asks the human. A delegated agent repor
 ```markdown
 Docs init mode:
 Target surface:
+Docs root:
 Authority sources:
 Generated/proposed paths:
 Assumptions:

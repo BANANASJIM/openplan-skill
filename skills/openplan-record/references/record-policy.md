@@ -39,6 +39,8 @@ Record in docs when the information is:
 
 Docs should include enough rationale to be understandable without the original chat.
 
+Docs may live under `.openplan/`, `docs/`, repo root, a separate docs repo, or another user-provided path. Choose the existing or explicit docs root before proposing paths.
+
 ## What Belongs In Handoff
 
 Record in handoff when the information is:

@@ -11,6 +11,10 @@ Use this contract before and after generating initial docs.
 
 docs repo / code repo / single repo / temporary report
 
+## Docs Root
+
+Examples: `.openplan/`, `docs/`, repo root, absolute path, separate docs repo.
+
 ## Human Goal Or Intent
 
 ## Existing Authority
@@ -32,6 +36,8 @@ docs repo / code repo / single repo / temporary report
 # Documentation Init Report
 
 ## Generated Paths
+
+Paths are relative to:
 
 ## Source Evidence
 

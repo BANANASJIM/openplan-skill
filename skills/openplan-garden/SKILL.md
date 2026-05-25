@@ -41,12 +41,17 @@ Garden first reports proposed cleanup. It may edit only when the user explicitly
 ## Workflow
 
 1. Identify document type: memory, design, decision, spec, handoff, review, tutorial, temporary brief.
-2. Load only the document and directly referenced context needed to judge it.
-3. Run optional deterministic checks if available and safe.
-4. Apply `references/checklist.md`.
-5. Report findings using `references/report-contract.md`.
-6. If the user requests cleanup, use `$openplan-record` before editing durable memory/docs.
-7. For periodic maintenance, separate safe mechanical cleanup from human-owned meaning changes.
+2. Identify the docs root when a whole documentation surface is being reviewed.
+3. Load only the document and directly referenced context needed to judge it.
+4. Run optional deterministic checks if available and safe.
+5. Apply `references/checklist.md`.
+6. Report findings using `references/report-contract.md`.
+7. If the user requests cleanup, use `$openplan-record` before editing durable memory/docs.
+8. For periodic maintenance, separate safe mechanical cleanup from human-owned meaning changes.
+
+## Docs Root
+
+Garden can operate on any docs root: `.openplan/`, `docs/`, repo root, a separate docs repo, or a path supplied by the user. Treat document-map paths as relative to the selected root. If the root is ambiguous, report the ambiguity before scanning broadly.
 
 ## Severity
 

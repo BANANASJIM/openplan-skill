@@ -6,6 +6,7 @@
 - Is its authority level clear?
 - Is it stable, draft, temporary, or a snapshot?
 - Does the title match its purpose?
+- What docs root or surface does it belong to?
 
 ## Goal/Intent Preservation
 
@@ -42,6 +43,7 @@
 - Are repeated explanations better replaced with a single source and references?
 - Are TODOs, open questions, or next actions still owned and relevant?
 - Would another agent know what to read first and what to ignore?
+- Would another agent know which docs root is authoritative?
 
 ## Duplication and Context Weight
 

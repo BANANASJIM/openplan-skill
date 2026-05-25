@@ -15,6 +15,10 @@ Use this before changing memory or docs.
 
 - memory / docs / handoff / review / html brief / no durable record
 
+## Destination Root
+
+- memory store / `.openplan/` / `docs/` / repo root / separate docs repo / user-provided path / temporary path
+
 ## Source Evidence
 
 ## Proposed Change

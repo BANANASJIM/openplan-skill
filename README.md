@@ -174,6 +174,28 @@ OpenPlan distinguishes goal/intent/design authority from implementation/executio
 
 The optional environment names `OPENPLAN_DOCS_REPO` and `OPENPLAN_CODE_REPO` may help an agent locate those surfaces, but the skills do not require them.
 
+## Documentation Location
+
+Documentation location is configurable. OpenPlan skills use a "docs root" instead of assuming docs live at the project root.
+
+Valid docs roots include:
+
+- `.openplan/` in the project root, useful when OpenPlan-governed docs should stay separate from product docs;
+- `docs/` when the project already uses that convention;
+- repository root for a dedicated docs repo;
+- a separate docs repository;
+- any relative or absolute path explicitly supplied by the human.
+
+When a docs root is selected, document-map paths are relative to that root. For example, with `Docs root: .openplan/`, `design/` means `.openplan/design/` and `decisions/` means `.openplan/decisions/`.
+
+Example invocation:
+
+```text
+Use $openplan-docs-init with docs root .openplan/ to initialize the minimal governed docs surface.
+```
+
+If no docs root is specified, the agent should discover existing conventions before proposing one. It should not migrate or rewrite existing docs into a new root without an explicit human decision.
+
 ## Documentation Generation
 
 Documentation generation has its own initialization step. Use `openplan-docs-init` before creating durable docs, memory, templates, or project knowledge at scale.
@@ -181,6 +203,7 @@ Documentation generation has its own initialization step. Use `openplan-docs-ini
 The rule is: initialize authority first, then generate content.
 
 - Identify whether the target is a docs repo, code repo, single repo, or disposable report.
+- Identify the docs root before proposing paths.
 - Map each generated file to explicit human intent, existing docs, code evidence, or labeled inference.
 - Generate the smallest useful scaffold.
 - Do not copy OpenPlan internal docs into a project as if they were project truth.
