@@ -1,6 +1,6 @@
 # OpenPlan-Style Initialization Protocol
 
-This protocol is independent of any OpenPlan runtime, hook system, or command-line tool.
+This protocol is platform-neutral and treats local enforcement tooling as optional evidence.
 
 ## Step 1: Establish Instruction Stack
 

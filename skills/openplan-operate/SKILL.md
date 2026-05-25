@@ -1,6 +1,6 @@
 ---
 name: "openplan-operate"
-description: Initialize and run an OpenPlan-style agent session on Codex, Claude Code, or another agent platform. Use after openplan-core when a task needs startup discipline, behavior constraints, subagent delegation rules, mode selection, dual-surface awareness, or safe auto/YOLO execution before alignment, research, design, implementation, or review. This skill is platform-neutral and does not require any OpenPlan runtime or project-specific hard gates.
+description: Initialize and run an OpenPlan-style agent session on Codex, Claude Code, or another agent platform. Use after openplan-core when a task needs startup discipline, behavior constraints, subagent delegation rules, mode selection, dual-surface awareness, or safe auto/YOLO execution before alignment, research, design, implementation, or review. This skill is platform-neutral and treats enforcement checks as optional evidence, not prerequisites.
 ---
 
 # OpenPlan Operate

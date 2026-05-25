@@ -5,7 +5,7 @@ description: "Apply OpenPlan philosophy as a platform-neutral agent operating pr
 
 # OpenPlan Core
 
-Use this as the base layer for other OpenPlan-style skills. It is deliberately independent of any OpenPlan command-line tool, runtime, hook system, or single agent platform.
+Use this as the base layer for other OpenPlan-style skills. It is deliberately independent of any project-specific enforcement tooling or single agent platform.
 
 Terminology: `goal` and `intent` are both valid. Use `goal` when emphasizing the desired outcome and verification. Use `intent` when emphasizing the human meaning, motivation, or decision behind that outcome.
 

@@ -1,6 +1,6 @@
 ---
 name: "openplan-review"
-description: "Review automated or YOLO-mode agent output using OpenPlan philosophy without requiring any OpenPlan runtime or project-specific hard gates. Use for Codex or Claude Code automated review flows when changes, plans, generated docs, specs, code patches, skill/plugin artifacts, or multi-agent workflow results must be checked for minimal context, human decision boundaries, layered authority, role/mode separation, research-before-design, evidence-backed findings, reversible automation, and no silent approval. This is a read-only review skill, not an implementation or auto-fix skill."
+description: "Review automated or YOLO-mode agent output using OpenPlan philosophy without requiring project-specific enforcement tools. Use for Codex or Claude Code automated review flows when changes, plans, generated docs, specs, code patches, skill/plugin artifacts, or multi-agent workflow results must be checked for minimal context, human decision boundaries, layered authority, role/mode separation, research-before-design, evidence-backed findings, reversible automation, and no silent approval. This is a read-only review skill, not an implementation or auto-fix skill."
 ---
 
 # OpenPlan Review

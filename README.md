@@ -2,7 +2,7 @@
 
 Portable OpenPlan-style Agent Skills for Codex, Claude Code, and other clients that support the `SKILL.md` standard.
 
-This repository is intentionally not an OpenPlan runtime and does not require any OpenPlan command-line tool. It packages the OpenPlan philosophy as composable skills: intent alignment, bounded research, dispatcher/subagent boundaries, dual-surface discipline, evidence-backed review, documentation governance, handoff, and safe auto/YOLO operation.
+This repository packages the OpenPlan philosophy as composable skills without requiring project-specific enforcement tooling. It covers intent alignment, bounded research, dispatcher/subagent boundaries, dual-surface discipline, evidence-backed review, documentation governance, handoff, and safe auto/YOLO operation.
 
 ## Install
 
@@ -350,7 +350,7 @@ This package maps OpenPlan philosophy into portable skills rather than copying O
 | Human-readable temporary frontend | `openplan-html-brief` |
 | Implementation enforcement and hard gates | Not included; reported as boundaries, checks, and residual risk |
 
-Intentionally not skillized as enforcement: command-line tools, hooks, worktree creation, merge gates, git notes, sandbox policy, and other project-specific runtime mechanisms. The skills preserve the philosophy and make missing enforcement visible.
+Intentionally not skillized as enforcement: hooks, worktree creation, merge gates, git notes, sandbox policy, and other project-specific automation. The skills preserve the philosophy and make missing enforcement visible.
 
 ## Claude Code Compatibility
 
@@ -371,8 +371,7 @@ MIT. See `LICENSE`.
 
 ## What This Repo Does Not Do
 
-- It does not install any OpenPlan command-line tools.
-- It does not assume any OpenPlan runtime.
+- It does not install project-specific enforcement tools.
 - It does not install project hooks or hard gates.
 - It does not create isolated workspaces.
 - It does not replace a docs repo or code repo.
