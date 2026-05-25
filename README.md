@@ -183,7 +183,7 @@ The skill layer keeps the philosophy without depending on project-local enforcem
 
 ## Dispatcher And Subagents
 
-OpenPlan uses a dispatcher boundary even when the platform has no special runtime:
+OpenPlan uses a dispatcher boundary even on ordinary agent platforms:
 
 - The dispatcher is the only human-facing coordinator.
 - Subagents receive bounded work; they do not ask the human directly.
