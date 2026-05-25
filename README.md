@@ -14,24 +14,35 @@ cd openplan-skill
 ./install.sh
 ```
 
-Then restart Codex or Claude Code so the new skills are discovered.
+Then restart Codex, Claude Code, or GitHub Copilot CLI so the new skills are discovered. In Copilot CLI, you can also run `/skills reload`.
 
-Install to both Codex and Claude Code personal skill directories:
+Install to Codex and Claude Code personal skill directories:
 
 ```bash
 ./install.sh
 ```
 
-Default destinations:
+Default destinations for `./install.sh`:
 
 - Codex: `${CODEX_HOME:-$HOME/.codex}/skills`
 - Claude Code: `${CLAUDE_SKILLS_DIR:-$HOME/.claude/skills}`
+
+Install to all supported personal skill directories, including GitHub Copilot CLI:
+
+```bash
+./install.sh --only all
+```
+
+Copilot CLI destination:
+
+- GitHub Copilot CLI: `${COPILOT_SKILLS_DIR:-${COPILOT_HOME:-$HOME/.copilot}/skills}`
 
 Install only one client:
 
 ```bash
 ./install.sh --only codex
 ./install.sh --only claude
+./install.sh --only copilot
 ```
 
 Install Claude project skills into the current repository:
@@ -40,13 +51,19 @@ Install Claude project skills into the current repository:
 ./install.sh --only claude --claude-dir .claude/skills
 ```
 
+Install Copilot CLI project skills into the current repository:
+
+```bash
+./install.sh --only copilot --copilot-dir .github/skills
+```
+
 If an existing `openplan-*` skill directory was not installed by this script, replacement requires explicit confirmation:
 
 ```bash
 ./install.sh --force
 ```
 
-Existing installed skills are backed up before replacement. Backups are written to a sibling directory such as `~/.codex/skills.openplan-skill-backups/` so Codex and Claude do not discover backup folders as active skills.
+Existing installed skills are backed up before replacement. Backups are written to a sibling directory such as `~/.codex/skills.openplan-skill-backups/` so Codex, Claude, and Copilot do not discover backup folders as active skills.
 
 If old skill names such as `openplan-yolo` or `openplan-doc-init` are still installed, the installer warns but does not delete them. Review those directories manually before removing them.
 
@@ -68,7 +85,7 @@ Run an isolated install smoke test:
 ./scripts/smoke-test
 ```
 
-After installing new Codex skills, restart Codex so discovery reloads. Claude Code may also need a restart after a newly created top-level skills directory appears.
+After installing new Codex skills, restart Codex so discovery reloads. Claude Code may also need a restart after a newly created top-level skills directory appears. In Copilot CLI, use `/skills reload` and `/skills info openplan-core` to confirm discovery.
 
 ## First Use
 
@@ -122,6 +139,20 @@ For optional Claude slash-command prompts:
 
 ```bash
 ./install.sh --only claude --commands-dir ~/.claude/commands
+```
+
+For GitHub Copilot CLI personal installation:
+
+```bash
+./install.sh --only copilot
+```
+
+Inside Copilot CLI:
+
+```text
+/skills reload
+/skills info openplan-core
+Use the /openplan-core skill to apply OpenPlan principles before acting.
 ```
 
 Recommended first project prompt:
@@ -386,6 +417,12 @@ This repo installs the same `skills/openplan-*` directories into those locations
 ## Codex Compatibility
 
 Codex discovers skills from `${CODEX_HOME:-$HOME/.codex}/skills/<skill-name>/SKILL.md`. The packaged skills also include `agents/openai.yaml` metadata for Codex UI surfaces.
+
+## GitHub Copilot CLI Compatibility
+
+Copilot CLI discovers personal skills from `${COPILOT_HOME:-$HOME/.copilot}/skills/<skill-name>/SKILL.md`. It also supports project skills under `.github/skills/<skill-name>/SKILL.md`, `.claude/skills/<skill-name>/SKILL.md`, or `.agents/skills/<skill-name>/SKILL.md`.
+
+Use `/skills reload` after installing during an active session, then `/skills info openplan-core` to verify loading. To force use of a skill, reference it with a slash name, such as `Use the /openplan-test skill to map this project's test layers.`
 
 ## License
 

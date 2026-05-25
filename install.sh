@@ -6,6 +6,7 @@ SOURCE_DIR="$ROOT_DIR/skills"
 
 CODEX_DIR="${CODEX_SKILLS_DIR:-${CODEX_HOME:-$HOME/.codex}/skills}"
 CLAUDE_DIR="${CLAUDE_SKILLS_DIR:-$HOME/.claude/skills}"
+COPILOT_DIR="${COPILOT_SKILLS_DIR:-${COPILOT_HOME:-$HOME/.copilot}/skills}"
 ONLY="both"
 COMMANDS_DIR=""
 DRY_RUN=0
@@ -18,12 +19,15 @@ usage() {
   cat <<'EOF'
 Usage: ./install.sh [options]
 
-Install OpenPlan Agent Skills for Codex and Claude Code.
+Install OpenPlan Agent Skills for Codex, Claude Code, and GitHub Copilot CLI.
 
 Options:
-  --only codex|claude|both     Install target set. Default: both.
+  --only codex|claude|copilot|all|both
+                                Install target set. Default: both (Codex + Claude).
+                                Use all for Codex + Claude + Copilot CLI.
   --codex-dir PATH             Codex skills directory. Default: ${CODEX_HOME:-$HOME/.codex}/skills.
   --claude-dir PATH            Claude skills directory. Default: ~/.claude/skills.
+  --copilot-dir PATH           GitHub Copilot CLI skills directory. Default: ${COPILOT_HOME:-$HOME/.copilot}/skills.
   --commands-dir PATH          Also generate legacy Claude slash-command prompts into PATH.
   --force                      Replace existing unmarked openplan-* skill directories.
   --dry-run                    Print actions without writing files.
@@ -35,6 +39,8 @@ Examples:
   ./install.sh --force
   ./install.sh --only codex
   ./install.sh --only claude --claude-dir .claude/skills
+  ./install.sh --only copilot
+  ./install.sh --only all
   ./install.sh --commands-dir ~/.claude/commands
 EOF
 }
@@ -205,7 +211,7 @@ install_commands() {
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --only)
-      [[ $# -ge 2 ]] || die "--only requires codex, claude, or both"
+      [[ $# -ge 2 ]] || die "--only requires codex, claude, copilot, all, or both"
       ONLY="$2"
       shift 2
       ;;
@@ -217,6 +223,11 @@ while [[ $# -gt 0 ]]; do
     --claude-dir)
       [[ $# -ge 2 ]] || die "--claude-dir requires a path"
       CLAUDE_DIR="$2"
+      shift 2
+      ;;
+    --copilot-dir)
+      [[ $# -ge 2 ]] || die "--copilot-dir requires a path"
+      COPILOT_DIR="$2"
       shift 2
       ;;
     --commands-dir)
@@ -255,12 +266,20 @@ case "$ONLY" in
   claude)
     install_to "$CLAUDE_DIR"
     ;;
+  copilot)
+    install_to "$COPILOT_DIR"
+    ;;
   both)
     install_to "$CODEX_DIR"
     install_to "$CLAUDE_DIR"
     ;;
+  all)
+    install_to "$CODEX_DIR"
+    install_to "$CLAUDE_DIR"
+    install_to "$COPILOT_DIR"
+    ;;
   *)
-    die "--only must be codex, claude, or both"
+    die "--only must be codex, claude, copilot, all, or both"
     ;;
 esac
 

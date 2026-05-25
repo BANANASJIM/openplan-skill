@@ -25,6 +25,23 @@ test -f "$TMP_DIR/codex/skills/openplan-docs-init/SKILL.md"
 test -f "$TMP_DIR/codex/skills/openplan-research/SKILL.md"
 test -f "$TMP_DIR/codex/skills/openplan-test/scripts/validate_test_report.py"
 
+"$ROOT_DIR/install.sh" \
+  --only copilot \
+  --copilot-dir "$TMP_DIR/copilot/skills" >/dev/null
+copilot_count="$(find "$TMP_DIR/copilot/skills" -mindepth 1 -maxdepth 1 -type d | wc -l | tr -d ' ')"
+test "$copilot_count" = "$skill_count"
+test -f "$TMP_DIR/copilot/skills/openplan-core/SKILL.md"
+test -f "$TMP_DIR/copilot/skills/openplan-test/SKILL.md"
+
+"$ROOT_DIR/install.sh" \
+  --only all \
+  --codex-dir "$TMP_DIR/all/codex/skills" \
+  --claude-dir "$TMP_DIR/all/claude/skills" \
+  --copilot-dir "$TMP_DIR/all/copilot/skills" >/dev/null
+test -f "$TMP_DIR/all/codex/skills/openplan-core/SKILL.md"
+test -f "$TMP_DIR/all/claude/skills/openplan-core/SKILL.md"
+test -f "$TMP_DIR/all/copilot/skills/openplan-core/SKILL.md"
+
 mkdir -p "$TMP_DIR/unmarked/skills/openplan-core"
 printf 'human edit\n' > "$TMP_DIR/unmarked/skills/openplan-core/SKILL.md"
 if "$ROOT_DIR/install.sh" --only codex --codex-dir "$TMP_DIR/unmarked/skills" >/dev/null 2>&1; then
