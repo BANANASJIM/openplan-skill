@@ -6,6 +6,16 @@ This repository is intentionally not an OpenPlan runtime and does not require an
 
 ## Install
 
+Quick start for first-time users:
+
+```bash
+git clone git@github.com:BANANASJIM/openplan-skill.git
+cd openplan-skill
+./install.sh
+```
+
+Then restart Codex or Claude Code so the new skills are discovered.
+
 Install to both Codex and Claude Code personal skill directories:
 
 ```bash
@@ -59,6 +69,60 @@ Run an isolated install smoke test:
 ```
 
 After installing new Codex skills, restart Codex so discovery reloads. Claude Code may also need a restart after a newly created top-level skills directory appears.
+
+## First Use
+
+Start with the smallest skill that matches the job.
+
+For a normal agent session:
+
+```text
+Use $openplan-core and $openplan-operate for this repo. Identify the goal, docs root, code surface, local instructions, and next safe route.
+```
+
+To initialize OpenPlan-style docs in a project without mixing them into product docs:
+
+```text
+Use $openplan-docs-init with docs root .openplan/ to initialize the minimal governed docs surface for this project. Preserve human goal/intent, label assumptions, and do not create broad empty scaffolding.
+```
+
+To run a safe automatic pass:
+
+```text
+Use $openplan-auto to inspect this repo, identify the docs root and code surface, run only bounded safe checks, and stop at human decision boundaries. End with checks run/skipped, next safe action, and residual risk.
+```
+
+To periodically clean up docs:
+
+```text
+Use $openplan-garden on docs root .openplan/ to check staleness, duplication, authority labels, memory/docs conflicts, and zero-context readability. Report first; do not rewrite durable intent unless explicitly asked.
+```
+
+To prepare a cross-session or cross-agent handoff:
+
+```text
+Use $openplan-handoff to create a minimal handoff snapshot with objective, docs root, authority surfaces, evidence, blockers, next safe action, and residual risk.
+```
+
+For Claude Code project-local installation:
+
+```bash
+git clone git@github.com:BANANASJIM/openplan-skill.git
+cd openplan-skill
+./install.sh --only claude --claude-dir /path/to/project/.claude/skills
+```
+
+For optional Claude slash-command prompts:
+
+```bash
+./install.sh --only claude --commands-dir ~/.claude/commands
+```
+
+Recommended first project prompt:
+
+```text
+Use $openplan-auto. This is the first OpenPlan-style pass for the project. Treat docs root as .openplan/ unless existing project docs indicate a better root. Do not make human-owned decisions. If initialization is appropriate, route through $openplan-docs-init; if docs already exist, route through $openplan-garden and $openplan-record proposals only.
+```
 
 ## Repository Layout
 
@@ -300,6 +364,10 @@ This repo installs the same `skills/openplan-*` directories into those locations
 ## Codex Compatibility
 
 Codex discovers skills from `${CODEX_HOME:-$HOME/.codex}/skills/<skill-name>/SKILL.md`. The packaged skills also include `agents/openai.yaml` metadata for Codex UI surfaces.
+
+## License
+
+MIT. See `LICENSE`.
 
 ## What This Repo Does Not Do
 
