@@ -8,8 +8,8 @@ Order:
 2. Initialize with minimal context.
 3. Classify the mode and authority surfaces.
 4. Collect durable evidence.
-5. Route to align, research, docs-init, review, garden, record proposal, handoff, or HTML brief.
-6. If files are changed, run proportional checks before reporting.
+5. Route to align, research, docs-init, test, review, garden, record proposal, handoff, or HTML brief.
+6. If files are changed, use proportional checks and report test evidence before reporting.
 7. Route durable memory/docs changes through record proposals and docs through garden.
 8. Handoff if blocked, cross-agent, long-running, or risky.
 9. Stop at human decision boundaries.
@@ -42,6 +42,7 @@ Scope:
 Evidence collected:
 Actions performed:
 Findings/proposals:
+Test evidence:
 Checks run:
 Checks skipped:
 Human decisions required:

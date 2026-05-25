@@ -17,7 +17,7 @@ Terminology: `goal` and `intent` are both valid. Use `goal` when emphasizing the
 4. Layered authority: goal/intent and design constrain specs/plans; specs/plans constrain execution; execution does not silently rewrite the goal/intent.
 5. Dual-surface separation: when a project separates design/docs from implementation/code, preserve that separation and do not let execution redefine the source of truth.
 6. Dispatcher boundary: only the active human-facing coordinator asks the human; subagents report `Human decisions required` or `BLOCKED` instead.
-7. Role separation: alignment, research, design, implementation, review, recording, gardening, and handoff are different modes even when one agent performs them.
+7. Role separation: alignment, research, design, implementation, testing, review, recording, gardening, and handoff are different modes even when one agent performs them.
 8. Evidence before confidence: every important claim needs observable support.
 9. Reversible automation: prefer actions that can be inspected, interrupted, replayed, or rolled back.
 10. No silent approval: "no findings" is not approval; it is a scoped review result.
@@ -35,6 +35,7 @@ Use this skill with:
 - `$openplan-align` for ambiguity and requirement shaping.
 - `$openplan-research` for bounded evidence gathering before design or execution.
 - `$openplan-docs-init` for governed documentation generation setup.
+- `$openplan-test` for proportional test evidence and regression proof.
 - `$openplan-review` for YOLO/auto-mode review.
 - `$openplan-handoff` for cross-agent or cross-session snapshots.
 - `$openplan-html-brief` for temporary human-facing HTML summaries.

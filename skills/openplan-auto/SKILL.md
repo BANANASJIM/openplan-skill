@@ -1,6 +1,6 @@
 ---
 name: "openplan-auto"
-description: "Orchestrate OpenPlan-style skills in auto or YOLO mode while preserving human decision boundaries. Use when Codex, Claude Code, or another agent should automatically inspect, align enough to proceed, research, review, garden, summarize, hand off, or generate temporary HTML without silently approving, changing durable goal/intent, bypassing risk decisions, or pretending soft guidance is hard enforcement. This skill coordinates openplan-core, openplan-operate, openplan-align, openplan-research, openplan-review, openplan-garden, openplan-record, openplan-handoff, openplan-html-brief, and openplan-docs-init."
+description: "Orchestrate OpenPlan-style skills in auto or YOLO mode while preserving human decision boundaries. Use when Codex, Claude Code, or another agent should automatically inspect, align enough to proceed, research, test, review, garden, summarize, hand off, or generate temporary HTML without silently approving, changing durable goal/intent, bypassing risk decisions, or pretending soft guidance is hard enforcement. This skill coordinates openplan-core, openplan-operate, openplan-align, openplan-research, openplan-test, openplan-review, openplan-garden, openplan-record, openplan-handoff, openplan-html-brief, and openplan-docs-init."
 ---
 
 # OpenPlan Auto
@@ -16,7 +16,7 @@ Auto mode can gather evidence, classify, review, summarize, and prepare proposal
 Default chain:
 
 ```text
-core -> operate -> (align/research if needed) -> action/review/garden -> record proposal -> handoff -> html brief
+core -> operate -> (align/research if needed) -> action/test/review/garden -> record proposal -> handoff -> html brief
 ```
 
 Use only the stages needed.
@@ -27,6 +27,7 @@ Use only the stages needed.
 | Startup | `$openplan-operate` | Load minimal context, choose mode | Destructive or broad action |
 | Alignment | `$openplan-align` | Infer safe route, ask limited questions only as the human-facing coordinator | Scope/architecture/risk decision |
 | Research | `$openplan-research` | Gather bounded evidence | Turning findings into decisions |
+| Test | `$openplan-test` | Choose proportional checks, prove regression coverage, report skipped checks | Approval, merge/release, or risk acceptance |
 | Review | `$openplan-review` | Read-only findings | Approval or fixes |
 | Garden | `$openplan-garden` | Semantic doc report | Durable doc rewrite |
 | Record | `$openplan-record` | Propose memory/docs updates | Ambiguous durable goal/intent update |
@@ -39,9 +40,9 @@ Use only the stages needed.
 1. `INIT`: read request and local instructions.
 2. `CLASSIFY`: choose primary mode and surfaces.
 3. `EVIDENCE`: collect minimal durable evidence.
-4. `DECIDE_ROUTE`: bounded action, align, research, docs-init, review, garden, record proposal, handoff, HTML brief, or block.
+4. `DECIDE_ROUTE`: bounded action, align, research, test, docs-init, review, garden, record proposal, handoff, HTML brief, or block.
 5. `EXECUTE_SAFE`: perform read-only work or explicitly authorized writes inside scope.
-6. `VERIFY`: run the proportional review, garden, or evidence check for the artifact touched.
+6. `VERIFY`: run the proportional test, review, garden, or evidence check for the artifact touched.
 7. `RECORD`: propose durable memory/docs updates only when warranted.
 8. `HANDOFF`: write or emit a minimal continuation snapshot when work is long-running, cross-agent, blocked, or risky.
 9. `REPORT`: summarize scope, evidence, actions, decisions needed, next safe action, and residual risk.
@@ -65,6 +66,7 @@ Closure rules:
 - If uncertainty affects route choice, use `$openplan-research` before design or execution.
 - If broad docs generation starts, use `$openplan-docs-init` before writing durable docs.
 - If bounded action changes implementation artifacts, verify with proportional checks and report no approval claim.
+- If testing strategy, regression proof, or skipped-check meaning matters, route through `$openplan-test`.
 - If review or garden reports blocking findings, do not auto-fix unless the original task explicitly authorized fixes in that scope.
 - If a handoff or report contains facts another agent will rely on, include evidence paths and residual risk.
 
@@ -113,6 +115,7 @@ Scope:
 Evidence collected:
 Actions performed:
 Findings/proposals:
+Test evidence:
 Checks run:
 Checks skipped:
 Human decisions required:

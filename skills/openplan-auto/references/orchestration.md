@@ -9,6 +9,7 @@ openplan-core
       ambiguous -> openplan-align
       uncertainty -> openplan-research
       bounded action -> explicit scoped work
+      test evidence -> openplan-test
       artifact review -> openplan-review
       doc quality -> openplan-garden
       docs generation init -> openplan-docs-init
@@ -73,11 +74,12 @@ Do not fix in the same pass unless explicitly authorized.
 2. Operate startup and confirm write scope was explicitly authorized.
 3. Research only if uncertainty affects the route.
 4. Make the narrow scoped change.
-5. Run proportional checks.
-6. Review or garden the touched artifact type.
-7. Record only proposed durable memory/docs changes.
-8. Handoff if continuation state matters.
-9. Report residual risk without claiming approval.
+5. Use openplan-test to select proportional checks when test selection, regression proof, or skipped-check meaning matters.
+6. Run the selected checks when safe and in scope.
+7. Review or garden the touched artifact type.
+8. Record only proposed durable memory/docs changes.
+9. Handoff if continuation state matters.
+10. Report residual risk without claiming approval.
 
 ## Blocked Versus Human Decision
 

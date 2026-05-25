@@ -2,7 +2,7 @@
 
 Portable OpenPlan-style Agent Skills for Codex, Claude Code, and other clients that support the `SKILL.md` standard.
 
-This repository packages the OpenPlan philosophy as composable skills without requiring project-specific enforcement tooling. It covers intent alignment, bounded research, dispatcher/subagent boundaries, dual-surface discipline, evidence-backed review, documentation governance, handoff, and safe auto/YOLO operation.
+This repository packages the OpenPlan philosophy as composable skills without requiring project-specific enforcement tooling. It covers intent alignment, bounded research, test evidence, dispatcher/subagent boundaries, dual-surface discipline, evidence-backed review, documentation governance, handoff, and safe auto/YOLO operation.
 
 ## Install
 
@@ -92,6 +92,12 @@ To run a safe automatic pass:
 Use $openplan-auto to inspect this repo, identify the docs root and code surface, run only bounded safe checks, and stop at human decision boundaries. End with checks run/skipped, next safe action, and residual risk.
 ```
 
+To design or audit a project test framework:
+
+```text
+Use $openplan-test to map the project's test layers, prove regression tests are meaningful, classify skipped checks, and report residual risk without treating passing tests as approval.
+```
+
 To periodically clean up docs:
 
 ```text
@@ -133,6 +139,7 @@ openplan-skill/
 │   ├── openplan-operate/
 │   ├── openplan-align/
 │   ├── openplan-research/
+│   ├── openplan-test/
 │   ├── openplan-docs-init/
 │   ├── openplan-review/
 │   ├── openplan-garden/
@@ -156,6 +163,7 @@ Each skill is a normal Agent Skill directory with `SKILL.md`. In this repo every
 | `openplan-operate` | Session startup, mode selection, behavior constraints, and subagent delegation rules. |
 | `openplan-align` | Clarify ambiguous requests and shape goal/intent before implementation or review. |
 | `openplan-research` | Gather bounded evidence before design, implementation, review, or documentation generation. |
+| `openplan-test` | Build proportional test evidence: test maps, regression proof, property/oracle/fixture strategy, and skipped-check risk. |
 | `openplan-docs-init` | Initialize governed documentation generation before durable docs or memory are created. |
 | `openplan-review` | Review automated or YOLO output without treating "no findings" as approval. |
 | `openplan-garden` | Check docs, memory, handoffs, and reports for semantic drift, periodic maintenance needs, and future-agent readability. |
@@ -166,7 +174,7 @@ Each skill is a normal Agent Skill directory with `SKILL.md`. In this repo every
 
 ## Philosophy
 
-OpenPlan starts from a simple claim: the human goal/intent is the highest authority. Agents can research, structure, implement, review, summarize, and automate, but they do not own acceptance, bypass, scope, architecture, or tradeoff decisions.
+OpenPlan starts from a simple claim: the human goal/intent is the highest authority. Agents can research, structure, implement, test, review, summarize, and automate, but they do not own acceptance, bypass, scope, architecture, or tradeoff decisions.
 
 The skill layer keeps the philosophy without depending on project-local enforcement. The core invariants are:
 
@@ -176,7 +184,7 @@ The skill layer keeps the philosophy without depending on project-local enforcem
 4. Layered authority: goal/intent and design constrain plans; plans constrain execution; execution must not silently rewrite the goal.
 5. Dual-surface discipline: when docs/design and code/execution are separate, preserve that separation.
 6. Dispatcher boundary: only the active human-facing coordinator asks the human; subagents report `Human decisions required` or `BLOCKED`.
-7. Role separation: alignment, research, design, implementation, review, recording, gardening, and handoff are different modes even when one agent performs several of them.
+7. Role separation: alignment, research, design, implementation, testing, review, recording, gardening, and handoff are different modes even when one agent performs several of them.
 8. Evidence before confidence: review findings and progress claims need scoped evidence.
 9. Reversible automation: unattended work should be inspectable, interruptible, replayable, and recoverable.
 10. No silent approval: a scoped review result is not human approval.
@@ -226,6 +234,17 @@ Research is a first-class mode because OpenPlan separates "what is true" from "w
 - Prefer local source-of-truth files, official docs, primary sources, and direct experiments.
 - Separate findings, inferences, options, and human-owned decisions.
 - Do not turn research findings into approval, scope changes, or durable intent.
+
+## Testing
+
+Testing is evidence, not approval. Use `openplan-test` when a project needs a test framework, regression proof, or a clear account of checks run/skipped.
+
+- Map project-native test layers before inventing new commands.
+- Keep default checks stable, repeatable, and proportionate.
+- Separate privileged, slow, flaky, external, or environment-touching checks from fast local checks.
+- Prove regression tests fail against the old behavior or an equivalent baseline before calling them proven.
+- Treat property, metamorphic, fixture, corpus, and independent-oracle tests as ways to reduce self-deception.
+- Report skipped checks and residual risk as visibly as checks run.
 
 ## Dual Repo And Dual Surface
 
@@ -301,6 +320,7 @@ openplan-core
   -> openplan-research when uncertainty affects the next action
   -> openplan-docs-init before broad documentation generation
   -> perform the bounded task only with explicit scope
+  -> openplan-test when testing evidence, regression proof, or skipped-check risk matters
   -> openplan-review for scoped evidence-backed review
   -> openplan-garden when docs or memory are touched
   -> openplan-record for durable memory/docs updates
@@ -318,6 +338,7 @@ An auto run is closed only when it ends in a scoped report, a blocked state, a h
 |---|---|
 | Intent alignment | Prompts, contracts, stop rules, and explicit questions. |
 | Research | Bounded evidence reports with sources, inferences, confidence, and residual uncertainty. |
+| Testing | Proportional test maps, regression proof, skipped-check reports, and test evidence without approval claims. |
 | Subagent organization | Delegation protocol and result contract. |
 | Review | Read-only evidence-backed findings. |
 | Documentation garden | Semantic checks, periodic maintenance reports, and optional local linters. |
@@ -341,11 +362,12 @@ This package maps OpenPlan philosophy into portable skills rather than copying O
 | Dual repo / dual surface authority | `openplan-core`, `openplan-operate`, `openplan-docs-init`, `openplan-review` |
 | Docs/design before implementation | `openplan-align`, `openplan-research`, `openplan-docs-init`, `openplan-review` |
 | Research before risky design | `openplan-research`, `openplan-review` |
+| Test evidence and regression proof | `openplan-test`, with `openplan-review` consuming the evidence |
 | Documentation generation initialization | `openplan-docs-init`, then `openplan-garden` and `openplan-record` |
 | Periodic documentation garden | `openplan-garden`, with `openplan-record` for durable updates |
 | Memory/docs as human-intent records | `openplan-record`, `openplan-garden` |
-| Evidence-backed review, no silent approval | `openplan-review`, `openplan-auto` |
-| Auto/YOLO closed loop | `openplan-auto`, with `review/garden/record/handoff/html` terminal routes |
+| Evidence-backed review, no silent approval | `openplan-test`, `openplan-review`, `openplan-auto` |
+| Auto/YOLO closed loop | `openplan-auto`, with `test/review/garden/record/handoff/html` terminal routes |
 | Cross-agent/session continuity | `openplan-handoff` |
 | Human-readable temporary frontend | `openplan-html-brief` |
 | Implementation enforcement and hard gates | Not included; reported as boundaries, checks, and residual risk |

@@ -1,0 +1,4 @@
+interface:
+  display_name: "OpenPlan Test"
+  short_description: "Build test evidence without approval claims"
+  default_prompt: "Use $openplan-test to choose proportional test layers, prove regression tests are meaningful, and report checks run/skipped without treating passing tests as approval."

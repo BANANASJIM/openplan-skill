@@ -23,6 +23,7 @@ test -f "$TMP_DIR/codex/skills/openplan-review/scripts/validate_review_report.py
 test -f "$TMP_DIR/codex/skills/openplan-auto/SKILL.md"
 test -f "$TMP_DIR/codex/skills/openplan-docs-init/SKILL.md"
 test -f "$TMP_DIR/codex/skills/openplan-research/SKILL.md"
+test -f "$TMP_DIR/codex/skills/openplan-test/scripts/validate_test_report.py"
 
 mkdir -p "$TMP_DIR/unmarked/skills/openplan-core"
 printf 'human edit\n' > "$TMP_DIR/unmarked/skills/openplan-core/SKILL.md"
