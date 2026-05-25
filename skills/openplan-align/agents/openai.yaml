@@ -1,0 +1,4 @@
+interface:
+  display_name: "OpenPlan Align"
+  short_description: "Structure goal/intent before action"
+  default_prompt: "Use $openplan-align to clarify an OpenPlan-style request before research, design, review, or implementation."

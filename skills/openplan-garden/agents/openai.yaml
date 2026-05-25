@@ -1,0 +1,4 @@
+interface:
+  display_name: "OpenPlan Garden"
+  short_description: "Semantic garden for goal/intent docs"
+  default_prompt: "Use $openplan-garden to inspect documents for goal/intent drift, periodic maintenance needs, broken structure, and future-agent readability."

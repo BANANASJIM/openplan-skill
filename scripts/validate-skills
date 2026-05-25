@@ -1,0 +1,117 @@
+#!/usr/bin/env python3
+"""Validate bundled Agent Skills without external dependencies."""
+
+from __future__ import annotations
+
+import re
+import sys
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+SKILLS_DIR = ROOT / "skills"
+NAME_RE = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
+REFERENCED_PATH_RE = re.compile(r"`((?:references|assets|scripts)/[^`]+)`")
+
+
+def parse_frontmatter(path: Path) -> tuple[dict[str, str], list[str]]:
+    text = path.read_text(encoding="utf-8")
+    lines = text.splitlines()
+    errors: list[str] = []
+    fields: dict[str, str] = {}
+
+    if not lines or lines[0].strip() != "---":
+        return fields, ["missing opening YAML frontmatter marker"]
+
+    try:
+        end = lines[1:].index("---") + 1
+    except ValueError:
+        return fields, ["missing closing YAML frontmatter marker"]
+
+    for raw in lines[1:end]:
+        if not raw.strip() or raw.startswith(" "):
+            continue
+        if ":" not in raw:
+            continue
+        key, value = raw.split(":", 1)
+        value = value.strip()
+        if len(value) >= 2 and value[0] == value[-1] and value[0] in {"'", '"'}:
+            value = value[1:-1]
+        fields[key.strip()] = value
+
+    if end + 1 >= len(lines) or not "\n".join(lines[end + 1 :]).strip():
+        errors.append("missing markdown body after frontmatter")
+
+    return fields, errors
+
+
+def validate_skill(skill_dir: Path) -> list[str]:
+    errors: list[str] = []
+    skill_md = skill_dir / "SKILL.md"
+
+    if not skill_md.exists():
+        return [f"{skill_dir.name}: missing SKILL.md"]
+
+    text = skill_md.read_text(encoding="utf-8")
+    fields, fm_errors = parse_frontmatter(skill_md)
+    errors.extend(f"{skill_dir.name}: {error}" for error in fm_errors)
+
+    name = fields.get("name", "")
+    description = fields.get("description", "")
+
+    if not name:
+        errors.append(f"{skill_dir.name}: missing required name")
+    elif name != skill_dir.name:
+        errors.append(f"{skill_dir.name}: name does not match directory ({name!r})")
+    elif len(name) > 64 or not NAME_RE.match(name):
+        errors.append(f"{skill_dir.name}: invalid name format")
+
+    if not description:
+        errors.append(f"{skill_dir.name}: missing required description")
+    elif len(description) > 1024:
+        errors.append(f"{skill_dir.name}: description exceeds 1024 characters")
+
+    openai_yaml = skill_dir / "agents" / "openai.yaml"
+    if not openai_yaml.exists():
+        errors.append(f"{skill_dir.name}: missing agents/openai.yaml")
+    else:
+        openai_text = openai_yaml.read_text(encoding="utf-8")
+        for required in ("interface:", "display_name:", "short_description:", "default_prompt:"):
+            if required not in openai_text:
+                errors.append(f"{skill_dir.name}: agents/openai.yaml missing {required}")
+
+    command_asset = skill_dir / "assets" / "claude-code-command.md"
+    if not command_asset.exists():
+        errors.append(f"{skill_dir.name}: missing assets/claude-code-command.md")
+
+    for rel_path in sorted(set(REFERENCED_PATH_RE.findall(text))):
+        if not (skill_dir / rel_path).exists():
+            errors.append(f"{skill_dir.name}: referenced path missing: {rel_path}")
+
+    return errors
+
+
+def main() -> int:
+    if not SKILLS_DIR.is_dir():
+        print(f"error: missing skills directory: {SKILLS_DIR}", file=sys.stderr)
+        return 1
+
+    skill_dirs = sorted(path for path in SKILLS_DIR.iterdir() if path.is_dir())
+    if not skill_dirs:
+        print("error: no skill directories found", file=sys.stderr)
+        return 1
+
+    errors: list[str] = []
+    for skill_dir in skill_dirs:
+        errors.extend(validate_skill(skill_dir))
+
+    if errors:
+        for error in errors:
+            print(f"error: {error}", file=sys.stderr)
+        return 1
+
+    print(f"validated {len(skill_dirs)} skills")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

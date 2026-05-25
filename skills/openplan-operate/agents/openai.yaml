@@ -1,0 +1,4 @@
+interface:
+  display_name: "OpenPlan Operate"
+  short_description: "Initialize and run OpenPlan-style agents"
+  default_prompt: "Use $openplan-operate to initialize an OpenPlan-style agent session and constrain behavior or subagents before acting."

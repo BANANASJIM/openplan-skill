@@ -1,0 +1,4 @@
+interface:
+  display_name: "OpenPlan Docs Init"
+  short_description: "Initialize governed docs generation"
+  default_prompt: "Use $openplan-docs-init to initialize an OpenPlan-style documentation surface before generating durable project docs."

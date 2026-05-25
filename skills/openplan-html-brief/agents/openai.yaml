@@ -1,0 +1,4 @@
+interface:
+  display_name: "OpenPlan HTML Brief"
+  short_description: "Temporary human-facing HTML briefs"
+  default_prompt: "Use $openplan-html-brief to create a concise temporary HTML summary of agent work for human review."

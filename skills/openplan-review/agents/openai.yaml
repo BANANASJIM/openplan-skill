@@ -1,0 +1,4 @@
+interface:
+  display_name: "OpenPlan Review"
+  short_description: "Review automation with OpenPlan invariants"
+  default_prompt: "Use $openplan-review to review automated agent changes against OpenPlan philosophy and report evidence-backed findings."

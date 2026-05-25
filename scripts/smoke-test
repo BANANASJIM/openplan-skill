@@ -1,0 +1,54 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+TMP_DIR="$(mktemp -d)"
+trap 'rm -rf "$TMP_DIR"' EXIT
+
+"$ROOT_DIR/scripts/validate-skills"
+
+skill_count="$(find "$ROOT_DIR/skills" -mindepth 1 -maxdepth 1 -type d | wc -l | tr -d ' ')"
+
+"$ROOT_DIR/install.sh" \
+  --codex-dir "$TMP_DIR/codex/skills" \
+  --claude-dir "$TMP_DIR/claude/skills" \
+  --commands-dir "$TMP_DIR/claude/commands" >/dev/null
+
+installed_count="$(find "$TMP_DIR/codex/skills" -mindepth 1 -maxdepth 1 -type d | wc -l | tr -d ' ')"
+test "$installed_count" = "$skill_count"
+test -f "$TMP_DIR/codex/skills/openplan-core/SKILL.md"
+test -f "$TMP_DIR/claude/skills/openplan-core/SKILL.md"
+test -f "$TMP_DIR/claude/commands/openplan-core.md"
+test -f "$TMP_DIR/codex/skills/openplan-review/scripts/validate_review_report.py"
+test -f "$TMP_DIR/codex/skills/openplan-auto/SKILL.md"
+test -f "$TMP_DIR/codex/skills/openplan-docs-init/SKILL.md"
+test -f "$TMP_DIR/codex/skills/openplan-research/SKILL.md"
+
+mkdir -p "$TMP_DIR/unmarked/skills/openplan-core"
+printf 'human edit\n' > "$TMP_DIR/unmarked/skills/openplan-core/SKILL.md"
+if "$ROOT_DIR/install.sh" --only codex --codex-dir "$TMP_DIR/unmarked/skills" >/dev/null 2>&1; then
+  echo "expected unmarked overwrite refusal" >&2
+  exit 1
+fi
+
+"$ROOT_DIR/install.sh" \
+  --only codex \
+  --codex-dir "$TMP_DIR/codex/skills" >/dev/null
+ls "$TMP_DIR"/codex/skills/openplan-core.backup.* >/dev/null
+
+if "$ROOT_DIR/install.sh" \
+  --only claude \
+  --claude-dir "$TMP_DIR/command-refusal/skills" \
+  --commands-dir "$TMP_DIR/claude/commands" >/dev/null 2>&1; then
+  echo "expected command overwrite refusal" >&2
+  exit 1
+fi
+
+"$ROOT_DIR/install.sh" \
+  --only claude \
+  --claude-dir "$TMP_DIR/command-force/skills" \
+  --commands-dir "$TMP_DIR/claude/commands" \
+  --force >/dev/null
+ls "$TMP_DIR"/claude/commands/openplan-core.md.backup.* >/dev/null
+
+echo "smoke test passed"

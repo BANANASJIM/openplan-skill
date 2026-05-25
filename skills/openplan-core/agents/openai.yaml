@@ -1,0 +1,4 @@
+interface:
+  display_name: "OpenPlan Core"
+  short_description: "Composable OpenPlan principles"
+  default_prompt: "Use $openplan-core to apply OpenPlan principles without assuming any specific git or hook implementation."

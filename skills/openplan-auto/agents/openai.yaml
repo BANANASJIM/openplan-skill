@@ -1,0 +1,4 @@
+interface:
+  display_name: "OpenPlan Auto"
+  short_description: "Orchestrate OpenPlan skills in auto mode"
+  default_prompt: "Use $openplan-auto to run an automatic OpenPlan-style workflow while preserving human decision boundaries."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "OpenPlan Research"
+  short_description: "Evidence gathering before decisions"
+  default_prompt: "Use $openplan-research to reduce uncertainty with bounded, evidence-backed research before design, implementation, review, or documentation generation."

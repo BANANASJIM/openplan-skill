@@ -1,0 +1,4 @@
+interface:
+  display_name: "OpenPlan Record"
+  short_description: "Maintain goal/intent in memory and docs"
+  default_prompt: "Use $openplan-record to update memory or documents while preserving the human goal/intent and provenance."

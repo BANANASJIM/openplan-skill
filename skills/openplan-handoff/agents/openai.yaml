@@ -1,0 +1,4 @@
+interface:
+  display_name: "OpenPlan Handoff"
+  short_description: "Snapshot handoff across agents"
+  default_prompt: "Use $openplan-handoff to create a minimal cross-agent or cross-session handoff snapshot."
