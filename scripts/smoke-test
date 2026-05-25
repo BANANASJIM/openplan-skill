@@ -34,7 +34,7 @@ fi
 "$ROOT_DIR/install.sh" \
   --only codex \
   --codex-dir "$TMP_DIR/codex/skills" >/dev/null
-ls "$TMP_DIR"/codex/skills/openplan-core.backup.* >/dev/null
+ls "$TMP_DIR"/codex/skills.openplan-skill-backups/*/openplan-core >/dev/null
 
 if "$ROOT_DIR/install.sh" \
   --only claude \
@@ -49,6 +49,6 @@ fi
   --claude-dir "$TMP_DIR/command-force/skills" \
   --commands-dir "$TMP_DIR/claude/commands" \
   --force >/dev/null
-ls "$TMP_DIR"/claude/commands/openplan-core.md.backup.* >/dev/null
+ls "$TMP_DIR"/claude/commands.openplan-skill-backups/*/openplan-core.md >/dev/null
 
 echo "smoke test passed"

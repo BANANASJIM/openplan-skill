@@ -46,7 +46,7 @@ If an existing `openplan-*` skill directory was not installed by this script, re
 ./install.sh --force
 ```
 
-Existing installed skills are backed up before replacement.
+Existing installed skills are backed up before replacement. Backups are written to a sibling directory such as `~/.codex/skills.openplan-skill-backups/` so Codex and Claude do not discover backup folders as active skills.
 
 If old skill names such as `openplan-yolo` or `openplan-doc-init` are still installed, the installer warns but does not delete them. Review those directories manually before removing them.
 

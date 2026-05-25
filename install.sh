@@ -70,11 +70,20 @@ can_replace() {
 
 backup_path() {
   local path="$1"
-  local backup="$path.backup.$RUN_ID"
+  local parent
+  local name
+  local backup_root
+  local backup
   local n=1
 
+  parent="$(dirname "$path")"
+  name="$(basename "$path")"
+  backup_root="${parent}.openplan-skill-backups/$RUN_ID"
+  backup="$backup_root/$name"
+
+  mkdir -p "$backup_root"
   while [[ -e "$backup" ]]; do
-    backup="$path.backup.$RUN_ID.$n"
+    backup="$backup_root/$name.$n"
     n=$((n + 1))
   done
 
