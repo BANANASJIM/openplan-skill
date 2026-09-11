@@ -1,83 +1,69 @@
 # The repo is the memory
 
-*Coding agents forget everything between sessions. The fix is not a longer prompt. It is a repository that holds intent, decisions and contracts in a form that people, agents and scripts all read the same way, and that stays true.*
+*Coding agents forget everything between sessions. The fix is not a longer prompt. It is treating the repository as the memory: the one place where intent, decisions and current truth live in a form that people, agents and scripts read the same way, and that is kept true on purpose.*
 
 ---
 
-## Agents forget. Use it.
+## Start from what an agent actually is
 
-Every agent session starts from zero. A chat is private to one process: no second person or agent can read it, nothing can diff or review it, and when two sessions disagree about what was decided there is no way to settle it.
+An agent is a stateless worker. It wakes up with no past, does a bounded piece of work, and disappears. Anything it should know has to be handed to it at the start, and anything it learned is gone unless it wrote it down somewhere that outlives the session.
 
-So the rule is blunt: if it isn't in the repository, it didn't happen. A decision is a file. Progress is a commit. A review finding is a file with a severity and a line number.
+The obvious response is to keep the conversation alive and pour more into it. That only hides the problem. A conversation is private to one process. Nobody else can read it, nothing can diff it or check it, and when two sessions disagree about what was decided there is no way to settle the dispute. It is memory that cannot be shared, audited or trusted.
 
-This collapses two problems into one. A colleague joining tomorrow and an agent starting a fresh session open the same repo, read the same few files in the same order, and get the same answer about what is going on.
+So the memory has to be external, shared and checkable. In a software project that means files under version control. If a fact is not in the repository, it does not exist for the next session, the next agent or the next colleague. Those three are the same reader, and that is the point.
 
-## Why docs, not prompts or memory features
+## Why documents, specifically
 
-A memory feature is per tool. A system prompt is per session. A markdown file in git is read identically by me, a collaborator, several different agent products and a CI job. It is the only substrate everyone shares.
+A memory feature belongs to one tool. A system prompt belongs to one session. A file in git belongs to everyone: the person who wrote it, the person who joins next month, every agent product, every CI job. It is the only substrate all of them read identically.
 
-Docs are checkable. A folder of markdown can be linted: every path reference resolves, every design change has a decision record beside it, nothing points at a file that was archived. A conversation cannot be linted.
+Files can be checked. You can verify that links resolve, that a design change came with a rationale, that nothing cites something that no longer exists. You cannot run a check over a chat.
 
-Docs accumulate. A decision record with the alternatives that were rejected is still useful in a year, to someone who wasn't there. Research is done once, its conclusion absorbed into the design, the raw note archived. Lessons from execution collect in one file and, when one keeps recurring, get promoted into a convention. Knowledge settles into a form that survives everyone forgetting. A chat log just gets longer.
+And files accumulate. A recorded decision, with the options that were rejected and why, is still useful a year later to someone who was not there. Research is done once, its conclusion absorbed, the raw notes set aside. Recurring lessons harden into conventions. Knowledge settles into a durable form instead of scrolling away.
 
-## Intent first, and keep it in sync
+## Intent is the scarce input
 
-Most agent failures I see are not capability failures. The agent did competent work on the wrong problem, because what the human wanted was never written down in a form the agent could check against.
+Agents are good at execution. What they lack is knowing what you want. Most bad outcomes are not incompetence; they are competent work aimed at the wrong target, because the target was never written down in a form the work could be checked against.
 
-So nothing starts until intent is aligned and on disk. A few rounds of questions with the person: why does this need to exist, who is it for, what is out of scope, how will we know it is done. The result is a short **needs snapshot**: goal, boundary, acceptance criteria, constraints, and, explicitly, the known unknowns. It is the contract for everything downstream. Design is checked against it. Reviews cite it. If it is missing, the only legal first move is to go back to the human.
+So intent comes first, and it goes on disk before anything else starts. Not a task list. The goal, the boundary, how you will know it is done, and what you know you do not know. That file is the contract every later artifact answers to. If it is missing, the right first move is to go back to the human, not to start guessing.
 
-Three habits keep it honest.
+Intent has to be kept separate from inference. When a document records what a person decided, it should quote the person. What the agent concluded from that goes in its own place, labelled as a conclusion. Otherwise an agent's guess gets written down in the same voice as the human's decision, and three sessions later nobody can tell which was which. Assumptions are marked as assumptions. A plan that is full of unmarked assumptions looks aligned and is not.
 
-**Human words and agent words stay separate.** When a doc records a decision, it quotes the person and the date. The agent's interpretation goes in its own paragraph, labelled as interpretation. A wrong reading can then be corrected without touching the quote, and nobody later mistakes an agent's guess for the human's intent. Assumptions are marked as assumptions. A snapshot full of the advisor's inferences looks aligned and isn't.
+Uncertainty has to be visible too. Write down the known unknowns; that list is what research is for, and research should reduce uncertainty without quietly making decisions. Unknown unknowns need a different tool: a reader who does not share your context. Hand the design to someone, human or agent, with no background, ask them to explain it back, and treat every place they stumble as a defect in the document, not in the reader. Authors cannot see their own gaps. And when reality later contradicts the plan, that contradiction gets written down the moment it is noticed, because a surprise that stays in one person's head is a surprise the next reader will hit again.
 
-**One channel to the human.** A single coordinating agent asks questions and presents options. Every other agent reports "needs a human decision" or "blocked" instead of asking directly. Humans own acceptance, scope, trade-offs and bypasses. Agents own investigation, proposals, execution and evidence.
+Decisions stay with humans for a structural reason. An agent optimises for the goal as written. A person holds the goal as meant. Acceptance, scope, trade-offs and bypasses are exactly the places where the written version and the meant version can diverge, so those are the places where an agent proposes and a person decides. One agent talks to the human; the rest report what decision they need.
 
-**Unknowns are tracked, not hidden.** The snapshot lists what we know we don't know. Research exists to move items off that list, and it reduces uncertainty without making decisions. Two checks are there for the unknown unknowns: an adversarial review that attacks every design decision (is it needed, can it be simpler, what does it violate), and a zero-context test where a fresh agent with no project knowledge reads the design docs, explains the system back, and lists what confused it. Where it stumbles is a documentation defect. When reality later disagrees with the plan, that becomes a written deviation, not a private observation.
+## Less context, deliberately
 
-## Minimal context, on purpose
+Given a shared memory, the instinct is to load all of it. That makes agents worse. Irrelevant material competes with relevant material for attention, and a superseded note in context is indistinguishable from a current one unless something says so. Every extra page is a chance to be misled. A task that cannot be done from a small slice is a task that is coupled to too many things and should be split.
 
-Loading the whole repo makes an agent worse, not better. Irrelevant material competes with relevant material, and a superseded note in context will be reasoned from as if it were current. A task that needs more context than fits comfortably is coupled to too many things and should be split.
+This changes how the memory is written, not just how much of it is read.
 
-The rules that follow all push the same way.
+Any fragment has to stand alone. The first line states the conclusion. Nothing says "as mentioned above," because the reader may never have seen above. Enumerable facts go in tables, not prose, so they can be skimmed and diffed.
 
-**Three root files, all short, hard length limit.** Behaviour rules, roles with what each may touch, and an index. That is the whole hot memory. Everything else loads on demand. Past about 150 lines, compliance visibly drops.
+Each fact has one home. Every other mention is a pointer. Two copies of the same fact will disagree eventually, and the reader has no way to know which one to believe.
 
-**Every folder answers exactly one question.** Design: what is this and why. Decisions: why this and not that. Engineering: what is the current contract. Planning: what next, and which human decisions are still owed. Research and reviews: dated evidence. Deviations: where reality differs from the plan. An agent should know which single folder holds its answer before opening anything, and stop reading once it has it. A sentence that answers the wrong question for its folder is a bug.
+Each place answers one question. Where you would look for "why was this chosen" is not where you would look for "what is the current contract" or "what should happen next." A reader with a question should know where the answer lives before opening anything, and should be able to stop reading once they have it.
 
-**A fact has one home. Everything else is a pointer.** Copies are how two versions come to disagree.
+Authority points one way. What the system is supposed to be constrains how it is built, which constrains what the code does. The upstream document never cites the downstream one, because the moment it does, the reader cannot tell which layer is the source of truth. If a downstream finding matters upstream, the upstream document states it in its own words.
 
-**First line is the conclusion. No "as mentioned above."** The agent may only ever see a fragment.
+And the state of the project is derived, not remembered. What should happen next follows from what exists on disk right now: whether intent is written, whether research is done, whether checks pass, whether a review left something open. Not from what the previous session thought it was doing.
 
-**Upstream never cites downstream.** Design does not link to research or reviews. If a research conclusion matters, the design states it in its own words and stands alone.
+## Why docs rot, and the one thing that stops it
 
-**Docs and code are two surfaces.** The docs repo owns intent, design, decisions and contracts. The code repo owns the implementation and a spec folder that turns design into tasks. The docs say what should be true; the code says what is. Different questions, so both are authoritative at once.
+Everything above fails if the memory drifts from reality. It always drifts, for a simple reason: updating a document is optional and shipping code is not. Any process that relies on remembering to update the docs will lose to that asymmetry, every time.
 
-## Docs that stay current
+The only thing that works is to make updates non-optional. Tie them to events instead of to discipline. A design changed: a rationale is now owed. A feature finished: its scratch material is now archived. A merge is about to happen: any recorded contradiction must be resolved first. None of these depend on anyone remembering.
 
-Everything above is worthless if the docs drift, and they drift because updating a doc is optional and shipping code is not. The answer is obligations triggered by events and checked by something other than memory.
+Make drift detectable. When one document is written against another, record which version it was written against. Then a change upstream lights up everything that depended on the old version, instead of leaving it quietly wrong.
 
-**A disagreement between docs and code is a defect, closed in the same change that found it.** Either the code is fixed to match the contract, or the doc is fixed to match reality and the commit says which. Both left standing is not an option.
+Make words mean one thing. "Merged," "proposed," "installed," "measured" are different states, and a document that uses them loosely will describe an open change as delivered behaviour. Readers should be able to trust the word.
 
-**References carry a version.** A spec that cites a design doc names the revision it was written against. When the design moves, everything anchored to the old revision lights up instead of silently staying wrong.
+Keep only the present. Outdated text is deleted, not struck through or annotated. Version control is the archive; the document is what is true now. The one exception is a recorded decision, which is never edited. To reverse it, write a new one that supersedes it, so the reasoning trail survives.
 
-**Status words are literal.** "On main" means merged. "Candidate" means an open change. "Installed" means one specific build someone ran. "Evidence" means a dated measurement. Candidate behaviour is never written as delivered behaviour.
+And treat disagreement between documents and code as a defect, closed in the same change that found it. Either the code is fixed to match what was intended, or the document is fixed to match what exists, and the change says which. Leaving both standing and letting the reader guess is how "the docs are the source of truth" turns into a wish.
 
-**Only the present is kept.** Outdated text is deleted, not struck through or annotated. Git is the archive. The single exception is an accepted decision record, which is never edited; to reverse it you write a new one that supersedes it.
+## Conventions first
 
-**Changing a design file creates a debt.** A decision record is owed, with context, alternatives and consequences. This is checked, not remembered.
+None of this needs tooling to start. Hooks and enforced permissions make the rules hard to break, but the rules are what you are adopting, and they work as conventions on day one. Add enforcement when a second person or a second agent starts stepping on things; by then you know which rules you keep breaking, and those are the ones worth automating.
 
-**Deviations close explicitly.** Fixed, with the commit. Accepted as-is, signed by a person. Deferred, to a named target. An open deviation blocks the merge.
-
-**A gardening pass runs on a schedule.** Read everything, report stale claims, duplicated rationale, unclear ownership, unresolved questions. Report first, rewrite only when asked.
-
-Each of these fires from an event or a check that runs anyway. That is the difference between "we should keep the docs updated" and docs that stay updated.
-
-## Start here
-
-Conventions before tooling. Hooks and isolated checkouts make the rules hard to break, but the rules work as conventions first, and they are what you are adopting.
-
-Write a needs snapshot before the next feature. Adopt the one-question-per-folder map and the three short root files. Write a decision record the next time a design changes. Leave a handoff at the end of the next long session: exact revision, what was verified, what is blocked, the next safe step, what the next agent must not decide. Enforce "disagreement is a defect" on yourself for a month.
-
-Add enforcement when a second person or a second agent starts stepping on things. By then you know which rules you keep breaking, and those are the ones worth a hook.
-
-The repository is the memory. Keep it small enough to read, true enough to trust, and checked often enough that you find out when it isn't.
+The repository is the memory. Keep it small enough to read, true enough to trust, and checked often enough that you find out when it is not.
