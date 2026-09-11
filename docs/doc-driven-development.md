@@ -1,69 +1,81 @@
-# Start every session in the docs repo
+# Proposal: a doc-based workflow for agent-assisted development
 
-*A doc-based workflow for working with coding agents: keep a small docs repository that holds only what you need to understand the project, open every session there, let the agent pull detail progressively, and let git track how the project's intent moves.*
+*Status: proposal, open for comments. Scope: how we and our coding agents organise project knowledge, where each kind of information lives, and how it stays current.*
 
 ---
 
-## The workflow in one paragraph
+## Summary
 
-There are two repositories. The code repo holds the implementation. The docs repo holds what the implementation is for: the goal, the principles, the architecture, the decisions and the reasons behind them, the conventions, and a pointer to where things currently stand. Every session, human or agent, starts in the docs repo. It reads a small entry point, follows references down to exactly the documents the task needs, does the work, and before it ends, writes back whatever it learned that changes the high-level picture. The next session starts the same way and inherits everything.
+I am proposing that we keep a small docs repository next to each code repository, that every working session, human or agent, starts there, and that the docs hold only what is needed to understand the project while pointing at the code for everything that changes often. Git tracks how the project's intent moves over time. The high-level picture stays synchronised because it has one home, and it stays true because updating it is part of doing the work rather than a step after it.
 
-## Why start in the docs repo
+## The problem this solves
 
-The code repo can tell you what the system does. It cannot tell you what it is supposed to do, why it is shaped the way it is, what was tried and rejected, or what the owner cares about. An agent that starts in the code repo reconstructs those from the code, which means it guesses, and its guesses become the basis for its work.
+Coding agents start every session with no memory. Today the context they need lives in three places: someone's head, a chat history nobody else can read, and the code itself. The first two do not transfer between people or sessions. The third can tell an agent what the system does, but not what it is supposed to do, why it is shaped the way it is, what was tried and rejected, or what we care about.
 
-Starting in the docs repo flips the order. The first thing loaded is the map: what this project is, what it must never become, where the current work sits. Only then does the agent descend into the code, already knowing what it is looking at. The design intent is in context before a single line of implementation is.
+The result is familiar. Each session reconstructs the project from the code, guesses at the intent, and does competent work on a slightly different understanding of the goal. Decisions get re-litigated. Preferences get relearned or ignored. Two agents pull the code in two directions. And the notes that would have prevented it are in a conversation that ended last week.
 
-It also fixes the memory problem. A session that begins at the map and ends by updating the map keeps the map current as a side effect of doing work. A session that begins in the code has nowhere natural to write down what it understood, so it doesn't, and the next session starts from zero again.
+## The proposal in one paragraph
+
+Two repositories per project. The code repo holds the implementation. The docs repo holds what the implementation is for: the goal, the principles, the architecture and why its boundaries are where they are, the decisions with their rejected alternatives, the conventions, and a pointer to where the work currently stands. Every session starts in the docs repo, reads a short entry point, follows references down to exactly the documents the task needs, does the work, and before it ends writes back anything that changes the high-level picture. The next session starts the same way and inherits everything.
+
+## Why the docs repo is the starting point
+
+Starting in the docs repo puts the design intent in context before a single line of implementation is. The first thing loaded is the map: what this project is, what it must not become, where the current work sits. Only then does the agent descend into the code, already knowing what it is looking at.
+
+It also keeps the memory current without a separate effort. A session that begins at the map and ends by updating the map maintains it as a side effect of working. A session that begins in the code has no natural place to write down what it understood, so it does not, and the next session starts from zero.
 
 ## Progressive disclosure
 
-An agent should never need the whole docs repo. It needs a route.
+No session should need the whole docs repo. It needs a route.
 
-The entry point is short: a few lines on what the project is, where the pieces live, and how to read the rest. From there, an index for each area points to one document per topic. Each document says where its detail lives, which for anything concrete is a path into the code. So the agent reads entry, then index, then the one document its task touches, then the specific files in the code repo that document names. Four hops, and it stops as soon as it has what it needs.
+The entry point is a few lines: what the project is, where the pieces live, how to read the rest. From there an index per area points to one document per topic. Each document names where its detail lives, which for anything concrete is a path into the code. So a session reads the entry, then an index, then the one document its task touches, then the specific code files that document names. Four hops, stopping as soon as it has what it needs.
 
-Loading more than that makes the agent worse, not better. Irrelevant material competes with relevant material, and an old note in context is indistinguishable from a current one. Small, layered, and self-contained beats complete.
+Loading more than that makes agents worse, not better. Irrelevant material competes with relevant material, and an old note in context is indistinguishable from a current one. Two writing rules keep the route working: every document leads with its conclusion, and nothing refers to "above" or "elsewhere" without a path, because the reader may have arrived from anywhere.
 
-Two writing rules make the route work. Every document leads with its conclusion, because the reader may only ever see the top. Nothing refers to "above" or "elsewhere" without a path, because the reader may have arrived from anywhere.
+## What goes in the docs, and what stays in the code
 
-## What belongs in the docs, and what belongs in the code
+This is the rule that decides whether the docs repo survives a real project.
 
-This is the part that decides whether the docs repo survives contact with a real project.
+The docs repo holds only what is needed to understand the project: what it is, why it exists, the principles it must obey, how it is divided and why, which decisions were made and what they ruled out, the conventions the code follows, and where the work currently stands. That material changes slowly, and only when a human changes their mind about the project.
 
-The docs repo holds only what you need to understand the project: what it is, why it exists, the principles it must obey, how it is divided into parts and why the boundaries are where they are, which decisions were made and what they ruled out, what conventions the code follows, and where the current work stands. That material changes slowly, and it changes only when a human changes their mind about the project.
+Everything that changes often stays in the code, and the docs point at it by path. Function signatures, config keys, file lists, enum values, exact commands, test counts, version numbers. If a sentence would have to change whenever the code changes, it does not belong in a document. A document that copies such a detail becomes a second owner of it, and the second owner is never the one that gets updated. A document that points at it is always right.
 
-Everything that changes often lives in the code, and the docs point at it by path. Function signatures, config keys, file lists, enum values, exact commands, test counts, version numbers: if a sentence would have to change whenever the code changes, it does not belong in a document. A document that copies such a detail becomes a second owner of it, and the second owner is never the one that gets updated. A document that points at it is always right.
+The test is mechanical: would this sentence still be true after a refactor that preserved the design? If yes, it is documentation. If no, it is code, and the document should say where to look instead of what is there.
 
-The test is mechanical. Read a sentence and ask whether it would still be true after a refactor that preserved the design. If yes, it is documentation. If no, it is code, and the document should say where to look instead of what is there.
+This keeps the docs small enough to actually read, and it keeps the two repositories from contradicting each other, because they do not try to say the same thing.
 
-This keeps the docs repo small enough that it can actually be read, and it keeps the two repositories from disagreeing, because they do not try to say the same thing.
+## One source of truth, tracked by git
 
-## One source of truth, and git to track it
+Every fact has exactly one home. Current status has one file; every other mention is a pointer to it. A decision has one record; the design document refers to it rather than restating it. A copy is a future contradiction, and a reader cannot tell which copy to believe.
 
-Every fact has exactly one home. The current status has one file; every other mention is a pointer to it. A design decision has one record; the design document refers to it rather than restating it. A copy is a future contradiction, and a reader cannot tell which copy to believe.
+Git makes this practical. Outdated text is deleted, not struck through or annotated, because history is already kept. Decisions are the one exception: an accepted decision is never edited, and reversing it means a new record that supersedes the old one, so the reasoning trail survives. Commits name which role made them and which upstream document they were based on, so the log of the docs repo reads as the history of how the project's intent moved, and blame on any sentence shows when and why it was written.
 
-Git is what makes a single source of truth practical. Outdated text is deleted, not struck through or annotated, because the history is already kept. Decisions are the one exception: an accepted decision is never edited. To reverse it, a new record supersedes it, so the trail of reasoning survives. Every commit says which role made it and which upstream document it was based on, so `git log` on the docs repo reads as the history of how the project's intent moved, and `git blame` on any sentence shows when and why it was written.
+## Synchronising the high-level space
 
-## Syncing the high-level space
+What actually needs synchronising between people, sessions and agents is not the code. Git handles code. It is the high-level space: what we want, what the system is meant to be, which trade-offs are settled and which are still open.
 
-What actually needs to be synchronised between people, sessions and agents is not the code. Git already handles code. It is the high-level space: what the owner wants, what the system is meant to be, which trade-offs have been settled and which are still open.
+That space drifts silently when it lives in conversations. Writing the intent down, in one place, before work starts, is what stops the drift. The design document becomes the reference every session checks itself against, and a reviewer can point at the exact sentence a change violates.
 
-That space drifts silently when it lives in conversations. Each session forms its own picture, the pictures diverge, and the code gets pulled in different directions by agents that were each doing competent work on a slightly different understanding of the goal. Writing the intent down, in one place, before work starts, is what stops that. The design document is the reference every session checks itself against, and a reviewer can point at the sentence a change violates.
+The record has to say who said what. When a document captures a decision, it quotes the person. What an agent inferred from that goes in its own place, labelled as inference. Otherwise a guess ends up written in the same voice as a decision, and later nobody can tell them apart.
 
-It also has to record who said what. When a document captures a decision, it quotes the person. What an agent inferred from that goes in its own place, labelled as inference. Otherwise a guess ends up written in the same voice as a decision, and later nobody can tell them apart.
-
-Over time this space accumulates the project's preferences: the naming the owner likes, the dependencies they refuse, the way they want errors handled, the lessons from the last three times something went wrong. Each session inherits those instead of relearning them, and the code converges toward one taste instead of reflecting whichever agent touched it last.
+Over time this space accumulates the project's preferences: the naming we like, the dependencies we refuse, how we want errors handled, the lessons from the last three incidents. Each session inherits those instead of relearning them, and the code converges toward one taste instead of reflecting whichever agent touched it last.
 
 ## Keeping it true
 
-A docs repo that lags reality is worse than none, because it is trusted. Updating a document is optional and shipping code is not, so any process that relies on remembering loses.
+A docs repo that lags reality is worse than none, because it is trusted. Updating a document is optional and shipping code is not, so any process that relies on remembering will lose.
 
-So updates are tied to events. Changing a design file means a decision record is owed. Finishing a feature means its scratch material is archived and the status pointer moves. Ending a session means the handoff is rewritten with the exact revision, what was verified, and the next safe step. None of these depend on anyone remembering.
+So updates are tied to events. Changing a design document means a decision record is owed. Finishing a feature means its scratch material is archived and the status pointer moves. Ending a session means the handoff is rewritten with the exact revision, what was verified, and the next safe step.
 
-Disagreement between a document and the code is a defect, and it is closed in the same change that finds it. Either the code is fixed to match the intent, or the document is fixed to match reality and the change says which. Both left standing is not allowed.
+Disagreement between a document and the code is a defect, closed in the same change that finds it. Either the code is fixed to match the intent, or the document is fixed to match reality and the change says which. Leaving both standing is not allowed.
 
-And references carry versions. A document written against another names the revision it was written against, so when the upstream document changes, everything that depended on the old version is flagged instead of quietly staying wrong.
+References carry versions. A document written against another names the revision it was written against, so when the upstream changes, everything that depended on the old version is flagged rather than quietly staying wrong.
 
----
+## What this asks of us
 
-That is the whole workflow. A small docs repo that holds the understanding and points at the code for everything else. Every session starts there, reads only its route, and writes back what it learned. Git tracks how the intent moved. The high-level picture stays synchronised because it has one home, and it stays true because updating it is part of the work, not an extra step after it.
+- Start every session, human or agent, in the docs repo, and end it by updating what changed.
+- Write intent down before work starts. Quote people; label inference.
+- Keep the docs to what is needed to understand the project. Point at the code for details.
+- One home per fact. Delete what is outdated. Never edit an accepted decision; supersede it.
+- Treat a doc/code disagreement as a bug to fix in the same change.
+
+None of this needs tooling to begin. These work as conventions on day one. We add enforcement, hooks and checks, once we know which rules we keep breaking. I would like to trial this on one project for a month and review.
