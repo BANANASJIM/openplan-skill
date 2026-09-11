@@ -6,7 +6,7 @@
 
 ## Summary
 
-I am proposing that we keep a small docs repository next to each code repository, that every working session, human or agent, starts there, and that the docs hold only what is needed to understand the project while pointing at the code for everything that changes often. Git tracks how the project's intent moves over time. The high-level picture stays synchronised because it has one home, and it stays true because updating it is part of doing the work rather than a step after it.
+I am proposing that we keep a separate docs repo, that every working session, human or agent, starts there, and that the docs hold only what is needed to understand the project while pointing at the code for everything that changes often. Git tracks how the project's intent moves over time. The high-level picture stays synchronised because it has one home, and it stays true because updating it is part of doing the work rather than a step after it.
 
 ## The problem this solves
 
@@ -16,7 +16,7 @@ The result is familiar. Each session reconstructs the project from the code, gue
 
 ## The proposal in one paragraph
 
-Two repositories per project. The code repo holds the implementation. The docs repo holds what the implementation is for: the goal, the principles, the architecture and why its boundaries are where they are, the decisions with their rejected alternatives, the conventions, and a pointer to where the work currently stands. Every session starts in the docs repo, reads a short entry point, follows references down to exactly the documents the task needs, does the work, and before it ends writes back anything that changes the high-level picture. The next session starts the same way and inherits everything.
+The code repo holds the implementation. A separate docs repo holds what the implementation is for: the goal, the principles, the architecture and why its boundaries are where they are, the decisions with their rejected alternatives, the conventions, and a pointer to where the work currently stands. Every session starts in the docs repo, reads a short entry point, follows references down to exactly the documents the task needs, does the work, and before it ends writes back anything that changes the high-level picture. The next session starts the same way and inherits everything.
 
 ## Why the docs repo is the starting point
 
