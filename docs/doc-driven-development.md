@@ -1,134 +1,95 @@
-# How doc-driven development with agents works
+# The repo is the memory
 
-## Overview
+*Why I make my coding agents read three files and nothing else, why the docs are the source of truth, and why none of that matters if the docs go stale.*
 
-Coding agents have no memory. Every session starts from zero, and whatever you explained yesterday is gone. Most teams fight this by pasting more into the prompt, or by keeping a long-running chat alive and hoping it doesn't compact. Both approaches break the moment a second person, or a second agent, shows up.
+---
 
-This workflow takes the opposite bet. Nothing important is allowed to live in a conversation. Intent, decisions, contracts, current status, open questions, even "where did the last session stop": each has one file that owns it. An agent starts by reading a few short files, works out what state the project is in from what's on disk, does one bounded thing, commits, and leaves. The next agent, or the next colleague, starts the same way. Documents are the product's memory, and the code is checked against them rather than the other way round.
+Two months ago I found a lie in one of my repositories. Not a big one. A "current status" block in the agent instructions file said the project was at a certain version with a certain set of open issues. It had been true once. Then the real status moved to a roadmap file, the block never got touched again, and for about two months every fresh agent session read the stale block first, believed it, and started work from a world that no longer existed. Nobody noticed because the block *looked* fine. It was well formatted. It just wasn't true.
 
-If you only read this section: the point is not "write more docs." It is "make the docs the thing that is true, keep them small enough to read, and check them like you check code."
+That was the moment I stopped thinking of documentation as something you write for people and started thinking of it as the only memory my agents have. Everything below follows from that.
 
-## Key Concepts
+## Agents forget. Stop fighting it.
 
-**Docs surface and code surface.** Two places, usually two repositories. The docs side says what the system is, why, and what its contracts are. The code side says what is actually implemented, plus a spec folder that turns design into tasks. They are kept apart on purpose.
+A coding agent starts every session from zero. Whatever you explained yesterday is gone. The usual reactions are to paste more into the prompt, or to keep one long chat alive and pray it doesn't get compacted. I did both for a while. They fail the same way: the knowledge lives somewhere only one process can see.
 
-**Needs snapshot.** A short file that captures what a human actually wants: the goal, what is in and out of scope, how we'll know it's done. It is written only after a real back-and-forth with the person, and it is the root everything else hangs from.
+A chat is private. A second person can't read it. A second agent can't read it. You can't diff it, blame it, or review it. If two sessions disagree about what was decided, there is no way to settle it except asking the human, who has also forgotten.
 
-**Handoff.** The checkpoint for whoever comes next: exact revision, what was verified and how, what's blocked, the next safe step, and what the next agent must *not* decide. Replaced, never appended.
+So the rule I landed on is blunt: if it isn't in the repository, it didn't happen. A decision is a file. Progress is a commit. A finding from a review is a file with a severity and a line number. "I'm pretty sure we agreed to X" is not a state my workflow recognises.
 
-**Decision record.** An append-only note of a choice, the alternatives, and the consequences. You never edit one. To change your mind you write a new one that supersedes it.
+Once you accept that, "many people" and "many agents" become the same problem with the same solution. A colleague joining tomorrow and an agent starting a fresh session both open the same repo, read the same few files in the same order, and get the same answer about what's going on.
 
-**Deviation.** A written admission that reality differs from the design, opened by whoever notices, closed only with an explicit outcome.
+## Why minimal context, not maximal
 
-**Role.** A hat an agent wears for one task: researcher, doc writer, spec writer, implementer, reviewer, and so on. Each role can read some things, write fewer things, and signs its commits with its own name.
+The tempting move, once the docs exist, is to load all of them. Bigger context window, more docs, better agent. Right?
 
-**Coordinator.** The one agent that talks to the human. Everyone else reports back to it.
+No. In my experience it goes the other way. An agent given the whole repo gets *worse*, not because it runs out of room but because the irrelevant material competes with the relevant material. It will happily reason from a research note that was superseded a month ago, because the note was in context and nothing told it not to. Context isn't free even when it fits. Every extra page is a chance to be misled.
 
-## How It Works
+I now treat "this task needs more context than fits comfortably" as a smell about the task, not a limit of the model. Usually it means the task is coupled to too many things and should be split.
 
-### Why files instead of chat
+The practical version of this is a handful of rules that all push in the same direction:
 
-An agent that reasons from the conversation is reasoning from a source nobody else can see and nothing can check. A file in git can be diffed, blamed, reviewed, and read by the next person. So the rule is blunt: if it isn't in the repository, it didn't happen. Progress is a commit. A decision is a decision record. A finding is a review file with a severity and a line number. "I'm pretty sure we agreed to X" is not a state the workflow recognises.
+**Three root files, all short, all with a hard length limit.** Behaviour rules, roles and what each may touch, and an index of where things are. That's the whole "hot memory." Everything else is loaded on demand. I keep them under 150 lines each because past that, compliance visibly drops. The agent starts skimming, same as a person.
 
-This also settles the multi-person question before it comes up. A colleague joining tomorrow and an agent starting a fresh session are the same case. They read the same three files, in the same order, and get the same answer about what's going on.
+**Every folder answers exactly one question.** Design answers "what is this and why." Decisions answer "why this and not that." Engineering answers "what is the current contract." Planning answers "what next." An agent with a question should know, before opening anything, which single folder holds the answer, and should stop reading the moment it has it. A sentence that answers the wrong question for its folder is a bug. That status block I mentioned was exactly this: delivery status living inside an instructions file, where nobody updating delivery status would think to look.
 
-### Why every folder answers one question
+**A fact has one home. Everything else is a pointer.** Copying is how you get two versions that disagree. The stale status block was a copy. The fix wasn't to update it; it was to delete it and leave one line saying where the real one lives.
 
-The docs side is split into folders, and each folder answers exactly one question. Design answers "what is this and why." Decisions answer "why this and not that." Engineering answers "what is the current contract." Planning answers "what next, and which human decisions are still owed." Research and reviews are dated evidence. Deviations are the gap between plan and reality.
+**First line is the conclusion. No "as mentioned above."** Because the agent may only ever see a fragment. A doc that only makes sense read top to bottom is a doc that will be misread.
 
-The reason is not tidiness. It is that an agent with a question should know, before opening anything, which single folder holds the answer, and should be able to stop reading the moment it has it. A sentence that answers the wrong question for its folder is a bug: a delivery status inside a design doc will rot, because nobody updating status thinks to look there.
+**Upstream never cites downstream.** The design doesn't link to a research note or a review. If a research conclusion matters, the design states it in its own words. This felt pedantic until I watched an agent follow a link from the design into a research doc, then into a second research doc that contradicted the first, and come back confused about what the design actually said.
 
-Two rules fall out of this. First, a fact has one home and every other mention is a pointer. We learned this the expensive way: a status block copied into a second file stopped being updated and quietly misled sessions for two months. Second, upstream never cites downstream. A design document does not link to a research note or a review. If a research conclusion matters, the design says it in its own words and stands on its own.
+None of this is about being terse. It's about making sure that whatever slice of the repo an agent happens to load, that slice is true and self-contained.
 
-### How an agent starts cold
+## Why docs, and not memory features or better prompts
 
-Three root files, all short, all with a hard length limit: the behaviour rules, the roles and what each may touch, and an index of where things are. That is the whole "hot memory." Everything else is loaded on demand.
+People ask why I don't just use the agent's built-in memory, or write a really good system prompt. Three reasons, and they're the reasons docs have always been good, just sharper now.
 
-Then the agent looks at the disk and works out the state. Does a needs snapshot exist? Is there research yet? Do the structural checks pass? Does the latest review have open blocking findings? Is there an open deviation? Those answers, not the previous conversation, decide what happens next. If the snapshot is missing, the only legal move is to go back to the human and align. If a review has a blocking finding, the only legal move is to fix it. The agent never asks "what were we doing" because the answer is always computable.
+**Docs sync people.** A memory feature is per-tool and per-user. A system prompt is per-session. A markdown file in git is read identically by me, my collaborator, three different agent products, and a CI script. It's the only substrate everyone shares.
 
-If it is resuming someone else's work, it reads the handoff. The handoff names the exact revision it was written against and what was actually verified, so the reader knows which claims to trust and which to re-check.
+**Docs are checkable.** You can lint a folder of markdown. You can check that every path reference resolves, that every design change has a decision record next to it, that nothing references a file that was archived. You cannot lint a conversation.
 
-### How a change moves from an idea to code
+**Docs accumulate.** This is the one I underrated. A decision record written today, with the alternatives that were rejected and why, is still useful in a year, to a person or an agent who wasn't there. Research gets done once, its conclusion gets absorbed into the design, and the raw note is archived. Lessons from execution collect in one file and, when one keeps recurring, a human promotes it into a convention. Knowledge precipitates out of the day-to-day and settles into a form that survives everyone forgetting. A chat log can't do that. It just gets longer.
 
-```mermaid
-flowchart LR
-  A[Human intent] --> B[Needs snapshot]
-  B --> C[Research]
-  C --> D[Design + decision records]
-  D --> E[Spec and task list]
-  E --> F[Code and tests]
-  D -. review .-> E
-  E -. review .-> F
-  F -. deviation .-> D
-```
+The shape that came out of this is a docs repo that owns intent, design, decisions and contracts, separate from the code repo that owns the implementation. Two surfaces, kept apart on purpose. The docs say what should be true. The code says what is. They answer different questions, which is exactly why they can both be authoritative at the same time.
 
-A person shows up with a half-formed idea. The coordinator does not start designing. It runs a few rounds of questions through an advisor role (why does this need to exist, who is it for, what is out of scope, how will we know it works) until the answers are firm enough to write down as a needs snapshot. That snapshot is the contract for everything that follows.
+## The part that actually matters: docs that don't rot
 
-Then research, if there are facts nobody knows yet. Research reduces uncertainty; it doesn't decide anything. Then the design documents, each design change paired with a decision record so the "why" survives the person who made it.
+Everything above is worthless if the docs drift from reality. And they always drift, because updating a doc is optional and shipping code is not. Every doc-driven attempt I've seen die, died here.
 
-Only when the design has settled does anyone write a spec, and only when the spec has been reviewed against the design does anyone write code. This ordering is strict, and it is the part people most want to skip. It exists because ambiguity amplifies as it moves downstream: a vague sentence in the design becomes two contradictory tasks in the spec becomes a week of implementation that has to be thrown away. Every hand-off between layers gets its own reviewer, and that reviewer did not write the thing being reviewed.
+So I stopped treating "keep the docs updated" as a discipline and started treating it as a set of obligations that are triggered by events and checked by something other than memory.
 
-Implementation commits do not touch the design layer. If writing the code reveals the design was wrong, that is not fixed in place. It becomes a deviation and goes back upstream, where a human decides.
+**A disagreement between docs and code is a defect, closed in the same change that found it.** This is the rule. Either the code is wrong and gets fixed to match the contract, or the doc is stale and gets fixed to match reality, and the commit says which. What you may not do is leave both standing and let the next reader guess. I once audited a docs repo against its code and found batches of confident sentences describing behaviour the code had never had. That's what "docs are the source of truth" looks like without this rule: a wish.
 
-### How the two repos stay honest
+**References carry a version.** When a spec cites a design doc, it names the revision it was written against. When the design moves, everything anchored to the old revision lights up as stale instead of silently staying wrong. This costs nothing to write and turns "is this still current?" from a judgement call into a diff.
 
-This is where most doc-driven attempts fall apart, so it gets spelled out.
+**Status words are literal.** "On main" means merged. "Candidate" means an open change. "Installed" means one specific build someone actually ran. "Evidence" means a measurement with a date. I got burned by docs describing a branch's behaviour as if it had shipped. Now candidate behaviour is never written as delivered behaviour, and a reader can trust the word.
 
-The docs say what should be true about contracts and intent. The code says what is implemented. Those are different questions, so both can be authoritative at once. The trouble starts when they disagree and both are left standing. The rule here has no exceptions: a disagreement is a defect, and it is closed in the same change that found it. Either the code is fixed to match the contract, or the doc is fixed to match reality and the commit says which. Leaving both and letting readers guess is not an option.
+**Only the present tense is kept.** Outdated text gets deleted. Not struck through, not annotated with "revised on," not moved to a "history" section. Git is the archive; the doc is what's true now. The single exception is an accepted decision record, which is never edited. To reverse one you write a new one that supersedes it, so the reasoning trail survives.
 
-Three habits make that rule cheap to keep. Downstream references carry a version: a spec that cites a design document names the revision it was based on, so when the design moves, everything anchored to the old revision lights up instead of going stale silently. Status words are literal: "on main" means merged, "candidate" means an open change, "installed" means one specific verified build, and "evidence" means a dated measurement. Candidate behaviour is never described as delivered. And deviations are first-class: anyone who notices a gap records it, and it closes only as fixed (with the commit), accepted as-is (signed by a person), or deferred (to a named target). An open deviation blocks the merge.
+**Changing a design file creates a debt.** A decision record is owed, with context, alternatives and consequences. Typos get fixed in place; reversals get a new record. This is checked, not remembered.
 
-Feature branches carry the same name in both repositories, and a person merges the pair together.
+**Reality diverging from the plan gets written down as a deviation.** Anyone who notices, agent or human, opens one. It closes only as fixed (with the commit), accepted as-is (signed by a person), or deferred (to a named target). An open deviation blocks the merge. The point is that "the code does something the design didn't say" is never a private observation. It's a file.
 
-### How people and agents work side by side
+**Someone with no context reads the docs and says what confused them.** Periodically I hand the design and engineering docs to a fresh agent session with zero project knowledge, ask it to explain the system back to me, and then ask what it couldn't follow. Where it stumbles is a documentation defect. This is the only readability test that works, because I can't un-know what I know. A structural linter catches broken links; only a cold reader catches a paragraph that made sense to its author and no one else.
 
-Each role commits under its own name, so `git log` shows who did what without anyone having to remember. Each agent works in its own isolated checkout and sees only the files its role is allowed to touch. What it cannot see, it cannot accidentally edit. Parallel work is merged one piece at a time, and a conflict stops and asks a person rather than getting auto-resolved.
+**A gardening pass runs on a schedule.** Read everything, report stale claims, duplicated rationale, unclear ownership, unresolved questions. Report first, rewrite only when asked. Cheap, boring, and it's caught more rot than any review.
 
-Only the coordinator talks to the human. Sub-agents that need a decision say so in their report; they do not ask directly. This sounds bureaucratic until you have had three sub-agents each ask the user a slightly different version of the same question. The human's job is deliberately small: state intent, review outputs, pick among options. Humans keep one emergency bypass that agents don't have, and using it leaves a trail and a reminder to fix the docs afterwards.
+None of these rules require willpower. Each one fires from an event (a design changed, a feature finished, a merge is about to happen) or from a check that runs anyway. That's the difference between "we should keep the docs updated" and docs that stay updated.
 
-One habit matters more than it looks: when a document records what a person decided, it quotes their words and the date. The agent's interpretation goes in a separate paragraph, labelled as interpretation. That way a wrong reading can be corrected without rewriting the quote, and nobody later mistakes an agent's guess for the human's intent.
+## What a day looks like
 
-### How you know the docs are right
+An agent starts. It reads the three root files. It looks at the disk and works out the state: is there an aligned statement of what the human wants? Is there research yet? Do the structural checks pass? Does the last review have open blocking findings? Is there an open deviation? Those answers, not the previous conversation, decide the next move. If the intent file is missing, the only legal move is to go back to the human and align. If a review has a blocking finding, the only legal move is to fix it.
 
-Docs get checked in three layers, cheapest first, and the cheap ones run every round.
+It does one bounded thing in an isolated checkout, as one role, seeing only the files that role may touch. It commits under that role's name. If it needs a decision, it writes "needs a human decision" in its report; it does not ask me directly, because only one agent talks to me and that's how three sub-agents stop asking slightly different versions of the same question.
 
-Structural checks are deterministic and free: links resolve, templates are followed, references point the allowed direction, version anchors are reachable, nothing is orphaned. Semantic checks are one agent pass that only reports: does the first line state the conclusion, is there hedging, are there back-references, do headings match bodies, is the same thing called two names. Alignment review is the expensive one and happens at each layer boundary: does the design serve the intent, does the spec serve the design, does the code serve the spec.
+When it stops, it leaves a handoff: exact revision, what was verified and how, what's blocked, the next safe step, and what the next agent must not decide on its own. The next session reads that and starts cold, the same way.
 
-Two more run once per feature. An adversarial pass asks a reviewer to attack every decision: is it needed, can it be simpler, what principle does it bend. And a zero-context test hands the design and engineering docs to a fresh agent with no project knowledge and asks it to explain the system back, then list what confused it. Where it stumbles is a documentation defect. This is the only honest readability test, because authors cannot un-know what they know.
+## If you want to try this
 
-Tests are evidence, not approval. A regression test counts only if it was seen failing on the old behaviour. A review that finds nothing says what it did not check.
+Don't start with tooling. The hooks, the isolated checkouts, the automated checks make the rules hard to break, but the rules work as conventions first, and they're what you're actually adopting.
 
-### How docs stay alive
+Start with the folder map and the one-question-per-folder rule. Add the three short root files. Start writing decision records the next time you change a design. Write a handoff at the end of your next long session and read it back at the start of the one after. Pick the "disagreement is a defect" rule and actually enforce it on yourself for a month.
 
-Nothing here relies on remembering to update something. Change a design file and a decision record is owed. Finish a feature and its research, reviews, and scratch files are archived or deleted, while design, decisions, engineering, and conventions stay. Outdated text is deleted, not struck through; git is the archive. Periodically a gardening pass reads everything and reports stale claims, duplicated rationale, unclear ownership, unresolved questions, and readability gaps. It reports first and rewrites only when asked. Lessons accumulate in one file and become conventions only after a person promotes them.
+Then, when a second person or a second agent shows up and starts stepping on things, add enforcement. By then you'll know which rules you keep breaking, and those are the ones worth a hook.
 
-## Where Things Live
-
-| Question | Look in |
-|---|---|
-| What is this and why does it exist? | `design/` |
-| Why this choice and not another? | `decisions/` |
-| What is the exact current contract for X? | `engineering/`, starting from its index |
-| What is the state on main right now? | the one status file, usually under `planning/` |
-| Which human decisions are still owed? | `planning/open-questions` or equivalent |
-| What did we find out about Y? | `research/` |
-| Why does the code differ from the design here? | `deviations/` |
-| Where did the last session stop? | the handoff, under agent state |
-| What does a new file of this type look like? | `_templates/` |
-| What may my role read and write? | the roles file at the root |
-
-## Gotchas
-
-**"Converged" is not "done."** It means the documents are stable enough to write specs against. Specs, code, and archiving follow in the same session. Treating convergence as a finish line is the most common way a session ends early.
-
-**Status in two places is status in zero places.** The second copy will stop being updated. Make it a pointer.
-
-**An agent's inference is not the human's intent.** Mark assumptions as assumptions. A snapshot full of the advisor's guesses looks aligned and isn't.
-
-**The same finding surviving several rounds means the context is polluted, not that the problem is hard.** Start a fresh session.
-
-**Green tests are not a sign-off.** They are evidence for the reviewer. Passing tests plus "no findings" still leaves a person to accept the risk.
-
-**Skipping the doc-first ordering feels efficient once.** Then the spec and the design disagree and nobody can say which is right.
-
-**The philosophy does not need the tooling.** Hooks, isolated checkouts, and automated checks make the rules hard to break, but the rules work as conventions first. Start with the folder map, the three root files, decision records, and the handoff. Add enforcement when a second person or a second agent makes it worth it.
+The whole thing fits on one principle: the repository is the memory, so treat it like one. Keep it small enough to read, true enough to trust, and checked often enough that you find out when it isn't.
