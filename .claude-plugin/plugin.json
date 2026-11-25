@@ -1,0 +1,18 @@
+{
+  "name": "openplan",
+  "displayName": "OpenPlan",
+  "version": "0.1.0",
+  "description": "OpenPlan-style Agent Skills: intent alignment, research, testing, review, docs governance, handoff, and safe auto workflows, with the core protocol loaded at session start.",
+  "author": { "name": "BANANASJIM" },
+  "homepage": "https://github.com/BANANASJIM/openplan-skill",
+  "repository": "https://github.com/BANANASJIM/openplan-skill",
+  "license": "MIT",
+  "userConfig": {
+    "load_core": {
+      "type": "boolean",
+      "title": "Load openplan-core at session start",
+      "description": "Adds the openplan-core protocol to the context of every session. Turn off to load it on demand.",
+      "default": true
+    }
+  }
+}

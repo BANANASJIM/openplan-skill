@@ -1,0 +1,6 @@
+{
+  "name": "openplan",
+  "description": "OpenPlan-style Agent Skills for Claude Code.",
+  "owner": { "name": "BANANASJIM" },
+  "plugins": [{ "name": "openplan", "source": "./" }]
+}
