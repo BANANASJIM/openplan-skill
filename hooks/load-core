@@ -1,0 +1,6 @@
+#!/bin/sh
+# SessionStart: what is printed here joins the session's context.
+[ "${CLAUDE_PLUGIN_OPTION_LOAD_CORE:-true}" = "false" ] && exit 0
+skill="$CLAUDE_PLUGIN_ROOT/skills/openplan-core"
+printf '[openplan-core skill — auto-loaded by SessionStart hook]\nBase directory for this skill: %s\n\n' "$skill"
+cat "$skill/SKILL.md"

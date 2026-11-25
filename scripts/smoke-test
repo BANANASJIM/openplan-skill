@@ -69,4 +69,11 @@ fi
   --force >/dev/null
 ls "$TMP_DIR"/claude/commands.openplan-skill-backups/*/openplan-core.md >/dev/null
 
+core="$(CLAUDE_PLUGIN_ROOT="$ROOT_DIR" sh "$ROOT_DIR/hooks/load-core")"
+[[ "$core" == *"# OpenPlan Core"* ]]
+test -z "$(CLAUDE_PLUGIN_ROOT="$ROOT_DIR" CLAUDE_PLUGIN_OPTION_LOAD_CORE=false sh "$ROOT_DIR/hooks/load-core")"
+python3 -m json.tool "$ROOT_DIR/.claude-plugin/plugin.json" >/dev/null
+python3 -m json.tool "$ROOT_DIR/.claude-plugin/marketplace.json" >/dev/null
+python3 -m json.tool "$ROOT_DIR/hooks/hooks.json" >/dev/null
+
 echo "smoke test passed"

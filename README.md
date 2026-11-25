@@ -6,7 +6,21 @@ This repository packages the OpenPlan philosophy as composable skills without re
 
 ## Install
 
-Quick start for first-time users:
+### Claude Code plugin
+
+At the prompt of a Claude Code session:
+
+```text
+/plugin install openplan --marketplace BANANASJIM/openplan-skill
+```
+
+The skills appear as `openplan:openplan-align`, `openplan:openplan-review`, and so on. `openplan-core` is loaded into every new session; set `load_core` to `false` in `/plugin configure openplan@openplan` to load it on demand instead.
+
+Use either the plugin or `install.sh` for Claude Code. With both, every skill is listed twice.
+
+### Install script
+
+For Codex, GitHub Copilot CLI, or Claude Code without plugins:
 
 ```bash
 git clone git@github.com:BANANASJIM/openplan-skill.git
@@ -165,6 +179,12 @@ Use $openplan-auto. This is the first OpenPlan-style pass for the project. Treat
 
 ```text
 openplan-skill/
+├── .claude-plugin/
+│   ├── plugin.json
+│   └── marketplace.json
+├── hooks/
+│   ├── hooks.json
+│   └── load-core
 ├── skills/
 │   ├── openplan-core/
 │   ├── openplan-operate/
